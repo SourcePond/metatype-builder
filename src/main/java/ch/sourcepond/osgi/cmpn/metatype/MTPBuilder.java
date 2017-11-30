@@ -16,6 +16,7 @@ package ch.sourcepond.osgi.cmpn.metatype;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
+import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -46,16 +47,14 @@ public class MTPBuilder {
         ocds.computeIfAbsent(pLocale, l -> new HashMap<>()).put(pOcd.getID(), pOcd);
     }
 
-    public <T extends Annotation> MTPBuilder ocd(final Class<T> pConfigDefinition) throws IOException {
+    public <T extends Annotation> OCDBuilder ocd(final Class<T> pConfigDefinition) throws IOException {
         final String path = format("/OSGI-INF/metatype/%s.xml", pConfigDefinition.getName());
         try (final InputStream in = requireNonNull(requireNonNull(pConfigDefinition, "Config definition is null").
                         getClassLoader().
                         getResourceAsStream(format("/OSGI-INF/metatype/%s.xml", pConfigDefinition.getName())),
                 format("Resource not found: %s", path))) {
-           // final OCD ocd = JAXB.unmarshal(in, MetaData.class).get(pConfigDefinition);
-
+            return JAXB.unmarshal(in, MetaData.class).get(pConfigDefinition);
         }
-        return this;
     }
 
     public MetaTypeProvider build() {

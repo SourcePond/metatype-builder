@@ -13,125 +13,180 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-import java.util.function.BiFunction;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 
-import static java.util.Arrays.asList;
+import static ch.sourcepond.osgi.cmpn.metatype.Type.valueOf;
+import static java.util.Objects.requireNonNull;
 
-public abstract class ADBuilder<T> {
-    private Option[] options;
+public class ADBuilder<T> {
     private final OCDBuilder ocdBuilder;
-    private final String id;
-    private final int type;
     private final Function<String, T> converter;
+    private List<Option> options;
+    private List<String> defaultValues;
+    private String id;
+    private String type;
     private int cardinality;
     private String name;
     private String description;
-    private String defaultValue[];
+    private String defaultValue;
     private String max;
     private String min;
-    private boolean required;
 
     public ADBuilder(final OCDBuilder pOCDBuilder,
-                     final String pId,
-                     final int pType,
                      final Function<String, T> pConverter) {
         ocdBuilder = pOCDBuilder;
-        id = pId;
-        type = pType;
         converter = pConverter;
     }
 
-    public ADBuilder<T> setMax(final T pMax) {
+    @XmlElement(required = true)
+    String getId() {
+        return id;
+    }
+
+    @XmlElement(required = true)
+    String getType() {
+        return type;
+    }
+
+    @XmlElement
+    int getCardinality() {
+        return cardinality;
+    }
+
+    @XmlElement
+    String getName() {
+        return name;
+    }
+
+    @XmlElement
+    String getDescription() {
+        return description;
+    }
+
+    @XmlElement
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    @XmlElement
+    public String getMin() {
+        return min;
+    }
+
+    @XmlElement
+    public String getMax() {
+        return max;
+    }
+
+    @XmlElement
+    public List<Option> getOption() {
+        if (options == null) {
+            options = new LinkedList<>();
+        }
+        return options;
+    }
+
+    private List<String> getDefaultValues() {
+        if (defaultValues == null) {
+            defaultValues = new LinkedList<>();
+        }
+        return defaultValues;
+    }
+
+    ADBuilder<T> id(final String pId) {
+        id = pId;
+        return this;
+    }
+
+    public ADBuilder<T> max(final T pMax) {
         max = pMax.toString();
         return this;
     }
 
-    public ADBuilder<T> setMin(final T pMin) {
+    public ADBuilder<T> min(final T pMin) {
         min = pMin.toString();
         return this;
     }
 
-    public ADBuilder<T> setCardinality(final int pCardinality) {
+    public ADBuilder<T> cardinality(final int pCardinality) {
         cardinality = pCardinality;
         return this;
     }
 
-    public ADBuilder<T> setName(final String pName) {
+    public ADBuilder<T> name(final String pName) {
         name = pName;
         return this;
     }
 
-    public ADBuilder<T> setDescription(final String pDescription) {
+    public ADBuilder<T> description(final String pDescription) {
         description = pDescription;
         return this;
     }
 
-    private <E> void applySetter(final E[] pValues, final BiFunction<Option, E, Object> pSetter) {
-        for (int i = 0 ; i < pValues.length ; i++) {
-            options[i] = new Option();
-            pSetter.apply(options[i], pValues[i]);
-        }
-    }
-
-    private <E> void initOptions(final E[] pValues, final BiFunction<Option, E, Object> pSetter) {
-        if (options == null) {
-            options = new Option[pValues.length];
-            applySetter(pValues, pSetter);
-        } else {
-            if (options.length != pValues.length) {
-                throw new IllegalArgumentException(String.format("Invalid value array: size of options = %d, size of values %d", options.length, pValues.length));
-            }
-            applySetter(pValues, pSetter);
-        }
-    }
-
-    public ADBuilder<T> setOptionValues(final T... pOptionValues) {
-        initOptions(pOptionValues, (option, value)  -> {
-            option.setValue(value.toString());
-            return null;
-        });
+    public ADBuilder<T> option(final String pLabel, String pValue) {
+        final Option opt = new Option();
+        opt.setLabel(pLabel);
+        opt.setValue(pValue);
+        options.add(opt);
         return this;
     }
 
-    public ADBuilder<T> setOptionLabels(final String... pOptionLabels) {
-        initOptions(pOptionLabels, (option, value)  -> {
-            option.setLabel(value.toString());
-            return null;
-        });
-        return this;
-    }
-
-    public ADBuilder<T> setDefaultValue(final T... pDefaultValue) {
-        defaultValue = new String[pDefaultValue.length];
+    public ADBuilder<T> defaultValue(final T... pDefaultValue) {
+        final List<String> defaultValues = getDefaultValues();
         for (int i = 0; i < pDefaultValue.length; i++) {
-            defaultValue[i] = pDefaultValue[i].toString();
+            defaultValues.add(pDefaultValue[i].toString());
         }
         return this;
     }
 
-    public ADBuilder<T> setRequired(final boolean pRequired) {
-        required = pRequired;
-        return this;
+    void setId(final String pId) {
+        id = pId;
     }
 
-    public void add() {
-        final AD<T> ad = new AD<>();
-        ad.setCardinality(cardinality);
-        ad.setConverter(converter);
-        ad.setDefaultValue(defaultValue);
-        ad.setDescription(description);
-        ad.setId(id);
-        ad.setMax(max);
-        ad.setMin(min);
-        ad.setName(name);
-        ad.setRequired(required);
-        ad.setType(type);
+    public void setType(final String pType) {
+        type = pType;
+    }
 
-        if (options != null) {
-            ad.getOption().addAll(asList(options));
-        }
+    void setCardinality(final int pCardinality) {
+        cardinality = pCardinality;
+    }
 
-        ocdBuilder.addAttributeDefinition(ad);
+    void setName(final String pName) {
+        name = pName;
+    }
+
+    void setDescription(final String pDescription) {
+        description = pDescription;
+    }
+
+    void setDefaultValue(final String pDefaultValue) {
+        defaultValue = pDefaultValue;
+    }
+
+    void setMax(final String pMax) {
+        max = pMax;
+    }
+
+    void setMin(final String pMin) {
+        min = pMin;
+    }
+
+    public OCDBuilder add() {
+        ocdBuilder.addAD(new AD<>(
+                requireNonNull(id, "ID has not been set"),
+                valueOf(requireNonNull(type, "Type has not been set")).getValue(),
+                converter,
+                cardinality,
+                name,
+                description,
+                options == null ? Collections.emptyList() : options,
+                defaultValues,
+                min,
+                max));
+        return ocdBuilder;
     }
 }

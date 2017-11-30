@@ -15,8 +15,6 @@ package ch.sourcepond.osgi.cmpn.metatype;
 
 import org.osgi.service.metatype.AttributeDefinition;
 
-import javax.xml.bind.annotation.XmlElement;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -27,51 +25,60 @@ final class AD<T> implements AttributeDefinition {
     private int cardinality;
     private String name;
     private String description;
-    private String rawDefaultValue;
-    private List<Option> option;
-    private String[] defaultValue;
+    private List<Option> options;
+    private List<String> defaultValue;
     private String min;
     private String max;
-    private boolean required;
 
-    @XmlElement
-    public boolean isRequired() {
-        return required;
+    public AD(final String pId,
+              final int pType,
+              final Function<String, T> pConverter,
+              final int pCardinality,
+              final String pName,
+              final String pDescription,
+              final List<Option> pOptions,
+              final List<String> pDefaultValue,
+              final String pMin,
+              final String pMax) {
+        id = pId;
+        type = pType;
+        converter = pConverter;
+        cardinality = pCardinality;
+        name = pName;
+        description = pDescription;
+        options = pOptions;
+        defaultValue = pDefaultValue;
+        min = pMin;
+        max = pMax;
     }
 
-    @XmlElement(name = "id", required = true)
-    @Override
-    public String getID() {
-        return id;
-    }
-
-    @XmlElement(required = true)
-    @Override
-    public int getType() {
-        return type;
-    }
-
-    @XmlElement
-    @Override
-    public int getCardinality() {
-        return cardinality;
-    }
-
-    @XmlElement
     @Override
     public String getName() {
         return name;
     }
 
-    @XmlElement
+    @Override
+    public String getID() {
+        return id;
+    }
+
     @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
+    public int getCardinality() {
+        return cardinality;
+    }
+
+    @Override
+    public int getType() {
+        return type;
+    }
+
     private String[] getOptionEntries(final Function<Option, String> pConverter) {
-        final List<Option> options = getOption();
-        final String[] entries = new String[getOption().size()];
+        final String[] entries = new String[options.size()];
         if (entries.length > 0) {
             for (int i = 0; i < entries.length; i++) {
                 entries[i] = pConverter.apply(options.get(i));
@@ -92,30 +99,7 @@ final class AD<T> implements AttributeDefinition {
 
     @Override
     public String[] getDefaultValue() {
-        return defaultValue;
-    }
-
-    @XmlElement(name = "default")
-    public String getRawDefaultValue() {
-        return rawDefaultValue;
-    }
-
-    @XmlElement
-    public String getMin() {
-        return min;
-    }
-
-    @XmlElement
-    public String getMax() {
-        return max;
-    }
-
-    @XmlElement
-    public List<Option> getOption() {
-        if (option == null) {
-            option = new LinkedList<>();
-        }
-        return option;
+        return defaultValue.toArray(new String[defaultValue.size()]);
     }
 
     @Override
@@ -127,50 +111,5 @@ final class AD<T> implements AttributeDefinition {
             return e.getLocalizedMessage();
         }
         return "";
-    }
-
-    public void setRequired(final boolean pRequired) {
-        required = pRequired;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public void setConverter(Function<String, T> converter) {
-        this.converter = converter;
-    }
-
-    public void setCardinality(int cardinality) {
-        this.cardinality = cardinality;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setRawDefaultValue(final String pRawDefaultValue) {
-        rawDefaultValue = pRawDefaultValue;
-        defaultValue = pRawDefaultValue.split(",");
-    }
-
-    public void setDefaultValue(String[] defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public void setMin(String min) {
-        this.min = min;
-    }
-
-    public void setMax(String max) {
-        this.max = max;
     }
 }

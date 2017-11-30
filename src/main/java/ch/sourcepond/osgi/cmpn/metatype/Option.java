@@ -6,21 +6,21 @@ class Option {
     private String label;
     private String value;
 
-    @XmlElement(required = true)
+    @XmlElement
     public String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    @XmlElement(required = true)
+    @XmlElement
     public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setLabel(String pLabel) {
+        label = pLabel;
+    }
+
+    public void setValue(String pValue) {
+        value = pValue;
     }
 }

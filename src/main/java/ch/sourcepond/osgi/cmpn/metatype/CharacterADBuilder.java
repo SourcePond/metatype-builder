@@ -2,12 +2,11 @@ package ch.sourcepond.osgi.cmpn.metatype;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static org.osgi.service.metatype.AttributeDefinition.CHARACTER;
 
 final class CharacterADBuilder extends ADBuilder<Character> {
 
-    public CharacterADBuilder(final OCDBuilder pOCDBuilder, final String pId) {
-        super(pOCDBuilder, pId, CHARACTER, CharacterADBuilder::valueOf);
+    public CharacterADBuilder(final OCDBuilder pOCDBuilder) {
+        super(pOCDBuilder, CharacterADBuilder::valueOf);
     }
 
     private static Character valueOf(final String pValue) {
