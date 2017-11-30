@@ -85,7 +85,12 @@ public class OCDBuilder {
         ad.add(pAd);
     }
 
-    public OCDBuilder name(final String pName) {
+    OCDBuilder id(final String pId) {
+        id = pId;
+        return this;
+    }
+
+    OCDBuilder name(final String pName) {
         name = pName;
         return this;
     }
@@ -95,10 +100,10 @@ public class OCDBuilder {
         return this;
     }
 
-    public OCDBuilder icon(final int pSize, final URL pResource) {
+    public OCDBuilder icon(final int pSize, final String pResource) {
         final Icon ic = new Icon();
         ic.setSize(pSize);
-        ic.setResource(pResource.toString());
+        ic.setResource(pResource);
         icon.add(ic);
         return this;
     }
@@ -112,7 +117,7 @@ public class OCDBuilder {
     }
 
     @XmlElement(name = "Icon")
-    public List<Icon> getIcon() {
+    List<Icon> getIcon() {
         if (icon == null) {
             icon = new LinkedList<>();
         }

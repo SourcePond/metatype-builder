@@ -33,12 +33,12 @@ public class MTPBuilder {
     private final Set<String> locales = new HashSet<>();
     private final Map<String, Map<String, ObjectClassDefinition>> ocds = new HashMap<>();
 
-    public OCDBuilder ocd(final String pId) {
-        return ocd(pId, getDefault().toString());
+    public OCDBuilder ocd(final String pId, final String pName) {
+        return ocd(pId, pName, getDefault().toString());
     }
 
-    public OCDBuilder ocd(final String pId, final String pLocale) {
-        return new OCDBuilder(this, pLocale);
+    public OCDBuilder ocd(final String pId, final String pName, final String pLocale) {
+        return new OCDBuilder(this, pLocale).id(pId).name(pName);
     }
 
     void addOCD(final String pLocale, final OCD pOcd) {

@@ -68,22 +68,22 @@ public class ADBuilder<T> {
     }
 
     @XmlElement
-    public String getDefaultValue() {
+    String getDefaultValue() {
         return defaultValue;
     }
 
     @XmlElement
-    public String getMin() {
+    String getMin() {
         return min;
     }
 
     @XmlElement
-    public String getMax() {
+    String getMax() {
         return max;
     }
 
     @XmlElement
-    public List<Option> getOption() {
+    List<Option> getOption() {
         if (options == null) {
             options = new LinkedList<>();
         }
@@ -147,7 +147,7 @@ public class ADBuilder<T> {
         id = pId;
     }
 
-    public void setType(final String pType) {
+    void setType(final String pType) {
         type = pType;
     }
 
