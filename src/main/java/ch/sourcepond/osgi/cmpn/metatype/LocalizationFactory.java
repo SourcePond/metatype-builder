@@ -13,25 +13,23 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-class Option implements Localizable<Option> {
-    private final String label;
-    private final String value;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-    public Option(final String pLabel, final String pValue) {
-        label = pLabel;
-        value = pValue;
+class LocalizationFactory {
+    private final String[] supportedLocales;
+    private final String baseName;
+
+    public LocalizationFactory(final String pBaseName, final String[] pSupportedLocales) {
+        baseName = pBaseName;
+        supportedLocales = pSupportedLocales;
     }
 
-    public String getLabel() {
-        return label;
+    public String[] getLocales() {
+        return supportedLocales;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public Option localize(final Localizer pLocalizer) {
-        return new Option(pLocalizer.localize(label), value);
+    public Localizer create(final String pLocale) {
+        return new Localizer(ResourceBundle.getBundle(baseName, new Locale(pLocale)), pLocale);
     }
 }

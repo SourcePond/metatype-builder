@@ -16,36 +16,33 @@ package ch.sourcepond.osgi.cmpn.metatype;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.lang.String.format;
 import static java.util.Locale.getDefault;
 
 final class MTP implements MetaTypeProvider {
-    private final String[] locales;
-    private final Map<String, Map<String, OCD>> ocds;
+    private final LocalizationFactory localizationFactory;
+    private final ConcurrentMap<String, OCD> ocds;
 
-    public MTP(final String[] pLocales, final Map<String, Map<String, OCD>> pOcds) {
-        locales = pLocales;
+    public MTP(final LocalizationFactory pLocalizationFactory, final ConcurrentMap<String, OCD> pOcds) {
+        localizationFactory = pLocalizationFactory;
         ocds = pOcds;
     }
 
     @Override
     public ObjectClassDefinition getObjectClassDefinition(final String pId, final String pLocale) {
         final String locale = pLocale == null ? getDefault().toString() : pLocale;
-        final Map<String, OCD> subOCDs = ocds.get(locale);
-        if (subOCDs == null) {
-            throw new IllegalArgumentException(format("No OCD found for locale '%s'", locale));
-        }
-        final ObjectClassDefinition ocd = subOCDs.get(pId);
+
+        final OCD ocd = ocds.get(pId);
         if (ocd == null) {
             throw new IllegalArgumentException(format("No OCD found for id '%s'", pId));
         }
-        return ocd;
+        return ocd.localize(localizationFactory.create(locale));
     }
 
     @Override
     public String[] getLocales() {
-        return locales;
+        return localizationFactory.getLocales();
     }
 }

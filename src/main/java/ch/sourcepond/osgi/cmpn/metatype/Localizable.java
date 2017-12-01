@@ -15,5 +15,5 @@ package ch.sourcepond.osgi.cmpn.metatype;
 
 interface Localizable<T> {
 
-    T cloneLocalized(Localizer pLocalizer);
+    T localize(Localizer pLocalizer);
 }

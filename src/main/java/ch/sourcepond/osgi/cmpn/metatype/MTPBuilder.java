@@ -13,59 +13,132 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
+import org.osgi.framework.Bundle;
 import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.ObjectClassDefinition;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.lang.String.format;
-import static java.util.Locale.getDefault;
 import static java.util.Objects.requireNonNull;
 import static javax.xml.bind.JAXB.unmarshal;
+import static org.osgi.framework.Constants.BUNDLE_LOCALIZATION;
+import static org.osgi.framework.Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
+import static org.osgi.framework.FrameworkUtil.getBundle;
 
+@XmlRootElement(namespace = "metatype")
 public class MTPBuilder {
-    private final Set<String> locales = new HashSet<>();
-    private final Map<String, Map<String, OCDBuilder>> ocdBuilders = new HashMap<>();
+    private final Map<String, OCDBuilder> ocdBuilderMap = new HashMap<>();
+    private final List<OCDBuilder> ocdBuilders = new LinkedList<>();
+    private Class<?> resourcesAccessor = getClass();
+    private String localization;
 
-    public OCDBuilder ocd(final String pId, final String pName) {
-        return ocd(pId, pName, getDefault().toString());
-    }
-
-    public OCDBuilder ocd(final String pId, final String pName, final String pLocale) {
-        return new OCDBuilder().init(this, pLocale, pId, pName);
-    }
-
-    public <T extends Annotation> OCDBuilder ocd(final Class<T> pConfigDefinition) throws IOException {
+    public static <T extends Annotation> MTPBuilder load(final Class<T> pConfigDefinition) {
         final String path = format("/OSGI-INF/metatype/%s.xml", pConfigDefinition.getName());
         final URL url = requireNonNull(pConfigDefinition.getResource(path), format("File %s not found in classpath", path));
 
+        final MTPBuilder mtpBuilder;
         try (final InputStream in = url.openStream()) {
-            return unmarshal(in, MetaData.class).find(this, pConfigDefinition);
+            mtpBuilder = unmarshal(in, MTPBuilder.class);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e.getMessage(), e);
         }
+        mtpBuilder.resourcesAccessor = pConfigDefinition;
+        return mtpBuilder;
     }
 
-    void addOCD(final String pLocale, final OCDBuilder pOcd) {
-        requireNonNull(pLocale, "Locale is null");
-        requireNonNull(pOcd.getId(), "OCD ID is null");
-        ocdBuilders.computeIfAbsent(pLocale, l -> new HashMap<>()).put(pOcd.getId(), pOcd);
+    @XmlAttribute
+    public String getLocalization() {
+        return localization;
+    }
+
+    @XmlElement(name = "OCD")
+    public List<OCDBuilder> getOCD() {
+        return ocdBuilders;
+    }
+
+    public OCDBuilder ocd(final String pId, final String pName) {
+        return ocdBuilderMap.computeIfAbsent(pId, id -> new OCDBuilder().init(this, pId, pName));
+    }
+
+    void addOCD(final OCDBuilder pOcd) {
+        ocdBuilderMap.put(pOcd.getId(), pOcd);
     }
 
     public MetaTypeProvider build() {
-        final Map<String, Map<String, OCD>> localeToBuilderMap = new HashMap<>();
-        ocdBuilders.entrySet().forEach(outer -> {
-            final Map<String, OCD> idToOcdMap = new HashMap<>();
-            outer.getValue().entrySet().forEach(inner -> {
-                localeToBuilderMap.computeIfAbsent(outer.getKey(), k -> new HashMap<>()). put(
-                        inner.getKey(), inner.getValue().build());
-            });
+        final ConcurrentMap<String, OCD> ocdMap = new ConcurrentHashMap<>();
+        ocdBuilderMap.entrySet().forEach(entry -> {
+            ocdMap.put(entry.getKey(), entry.getValue().build());
         });
-        return new MTP(locales.toArray(new String[0]), localeToBuilderMap);
+
+        final Bundle bundle = requireNonNull(getBundle(resourcesAccessor), format("No bundle for %s", resourcesAccessor));
+        String baseName = localization;
+        if (baseName == null) {
+            baseName = bundle.getHeaders().get(BUNDLE_LOCALIZATION);
+        }
+        if (baseName == null) {
+            baseName = BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
+        }
+        int index = baseName.indexOf('/');
+        String pattern = baseName.substring(index + 1) + "*.properties";
+        String path = index == -1 ? "" : baseName.substring(0, index);
+        final Enumeration<URL> urls = bundle.findEntries(path, pattern, false);
+
+        String[] locales = null;
+        if (urls != null) {
+            final List<String> localeList = new LinkedList<>();
+            while (urls.hasMoreElements()) {
+                final URL url = urls.nextElement();
+                path = url.getPath();
+                index = path.lastIndexOf('/');
+                pattern = index == -1 ? path : path.substring(index + 1);
+
+                index = pattern.indexOf('_');
+                if (index != -1) {
+                    final String[] items = pattern.substring(index + 1).replace(".properties", "").split("_");
+                    Locale locale;
+                    switch (items.length) {
+                        case 1: {
+                            locale = new Locale(items[0]);
+                            break;
+                        }
+                        case 2: {
+                            locale = new Locale(items[0], items[1]);
+                            break;
+                        }
+                        case 3: {
+                            locale = new Locale(items[0], items[1], items[2]);
+                            break;
+                        }
+                        default: {
+                            locale = null;
+                        }
+                    }
+
+                    if (locale != null) {
+                        localeList.add(locale.toString());
+                    }
+                }
+            }
+            locales = localeList.toArray(new String[localeList.size()]);
+        }
+
+        return new MTP(new LocalizationFactory(baseName, locales), ocdMap);
     }
 }

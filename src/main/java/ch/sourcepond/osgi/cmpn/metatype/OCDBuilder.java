@@ -23,7 +23,6 @@ import static java.util.stream.Collectors.toList;
 
 public class OCDBuilder {
     private MTPBuilder mtpBuilder;
-    private String locale;
     private List<ADBuilder<?>> adBuilders;
     private List<IconBuilder> iconBuilders;
     private String name;
@@ -33,14 +32,13 @@ public class OCDBuilder {
     OCDBuilder() {
     }
 
-    OCDBuilder init(final MTPBuilder pMtpBuilder, final String pLocale) {
+    OCDBuilder init(final MTPBuilder pMtpBuilder) {
         mtpBuilder = pMtpBuilder;
-        locale = pLocale;
         return this;
     }
 
-    OCDBuilder init(final MTPBuilder pMtpBuilder, final String pLocale, final String pId, final String pName) {
-        init(pMtpBuilder, pLocale);
+    OCDBuilder init(final MTPBuilder pMtpBuilder, final String pId, final String pName) {
+        init(pMtpBuilder);
         id = pId;
         name = pName;
         return this;
@@ -157,7 +155,7 @@ public class OCDBuilder {
     }
 
     public MTPBuilder add() {
-        mtpBuilder.addOCD(locale, this);
+        mtpBuilder.addOCD(this);
         return mtpBuilder;
     }
 }

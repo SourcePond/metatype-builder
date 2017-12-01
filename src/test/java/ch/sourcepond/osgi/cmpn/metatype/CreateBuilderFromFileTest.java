@@ -37,12 +37,12 @@ import static org.junit.Assert.assertNull;
 import static org.osgi.service.metatype.ObjectClassDefinition.ALL;
 
 public class CreateBuilderFromFileTest {
-    private final MTPBuilder mtpBuilder = new MTPBuilder();
+    private final MTPBuilder mtpBuilder = MTPBuilder.load(TestConfigurationAsAnnotation.class);
     private OCDBuilder ocdBuilder;
 
     @Before
     public void setup() throws Exception {
-        ocdBuilder = mtpBuilder.ocd(TestConfigurationAsAnnotation.class);
+        ocdBuilder = mtpBuilder.getOCD().get(0);
         ocdBuilder.add();
     }
 

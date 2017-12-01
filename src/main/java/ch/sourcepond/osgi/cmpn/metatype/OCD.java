@@ -21,12 +21,14 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static java.util.stream.Collectors.toList;
 
 final class OCD implements ObjectClassDefinition, Localizable<OCD> {
     private static final AttributeDefinition[] TEMPLATE_ARRAY = new AttributeDefinition[0];
+    private volatile ConcurrentMap<String, OCD> localizedClones;
     private final String name;
     private final String id;
     private final String description;
@@ -46,12 +48,19 @@ final class OCD implements ObjectClassDefinition, Localizable<OCD> {
     }
 
     @Override
-    public OCD cloneLocalized(final Localizer pLocalizer) {
-        return new OCD(id,
+    public OCD localize(final Localizer pLocalizer) {
+        if (localizedClones == null) {
+            synchronized (localizedClones) {
+                if (localizedClones == null) {
+                    localizedClones = new ConcurrentHashMap<>();
+                }
+            }
+        }
+        return localizedClones.computeIfAbsent(pLocalizer.getLocale(), locale -> new OCD(id,
                 icon,
-                ad.stream().map(ad -> ad.cloneLocalized(pLocalizer)).collect(toList()),
+                ad.stream().map(ad -> ad.localize(pLocalizer)).collect(toList()),
                 pLocalizer.localize(name),
-                pLocalizer.localize(description));
+                pLocalizer.localize(description)));
     }
 
     @Override

@@ -13,14 +13,19 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 class Localizer {
     private final ResourceBundle resourceBundle;
+    private final String locale;
 
-    public Localizer(final ResourceBundle pResourceBundle) {
+    public Localizer(final ResourceBundle pResourceBundle, final String pLocale) {
         resourceBundle = pResourceBundle;
+        locale = pLocale;
+    }
+
+    public String getLocale() {
+        return locale;
     }
 
     public String localize(final String pKey) {
