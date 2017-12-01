@@ -73,13 +73,11 @@ final class OCD implements ObjectClassDefinition {
                 break;
             }
             case REQUIRED: {
-                ads = ad.stream().filter(ad -> ad.getCardinality() == REQUIRED_ATTR).
-                        collect(Collectors.toList()).toArray(TEMPLATE_ARRAY);
+                ads = ad.stream().filter(ad -> ad.isRequired()).collect(Collectors.toList()).toArray(TEMPLATE_ARRAY);
                 break;
             }
             case OPTIONAL: {
-                ads = ad.stream().filter(ad -> ad.getCardinality() != REQUIRED_ATTR).
-                        collect(Collectors.toList()).toArray(TEMPLATE_ARRAY);
+                ads = ad.stream().filter(ad -> !ad.isRequired()).collect(Collectors.toList()).toArray(TEMPLATE_ARRAY);
                 break;
             }
             default: {

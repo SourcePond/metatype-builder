@@ -35,6 +35,9 @@ public class ADBuilder<T> {
     private String max;
     private String min;
 
+    // Default is true, see osgi.cmpn-6.0.0.pdf / 105.8 Meta Type Resource XML Schema
+    private boolean required = true;
+
     ADBuilder() {
     }
 
@@ -69,11 +72,9 @@ public class ADBuilder<T> {
         return description;
     }
 
+    @XmlJavaTypeAdapter(DefaultValueAdapter.class)
     @XmlAttribute
     List<String> getDefault() {
-        if (defaultValues == null) {
-            defaultValues = new LinkedList<>();
-        }
         return defaultValues;
     }
 
@@ -87,7 +88,12 @@ public class ADBuilder<T> {
         return max;
     }
 
-    @XmlElement
+    @XmlAttribute
+    boolean isRequired() {
+        return required;
+    }
+
+    @XmlElement(name = "Option")
     List<OptionBuilder> getOption() {
         if (optionBuilders == null) {
             optionBuilders = new LinkedList<>();
@@ -170,14 +176,15 @@ public class ADBuilder<T> {
         min = pMin;
     }
 
-    AD build() {
-        final List<Option> options;
-        if (optionBuilders == null) {
-            options = emptyList();
-        } else {
-            options = optionBuilders.stream().map(builder -> builder.build()).collect(toList());
-        }
+    void setRequired(final boolean pRequired) {
+        required = pRequired;
+    }
 
+    void setDefault(final List<String> pDefaultValues) {
+        defaultValues = pDefaultValues;
+    }
+
+    AD build() {
         return new AD(
                 requireNonNull(id, "ID has not been set"),
                 requireNonNull(type, "Type has not been set").getValue(),
@@ -185,10 +192,11 @@ public class ADBuilder<T> {
                 cardinality,
                 name,
                 description,
-                options,
+                optionBuilders == null ? null : optionBuilders.stream().map(builder -> builder.build()).collect(toList()),
                 defaultValues,
                 min,
-                max);
+                max,
+                required);
     }
 
     public OCDBuilder add() {

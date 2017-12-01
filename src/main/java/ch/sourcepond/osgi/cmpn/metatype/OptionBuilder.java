@@ -1,5 +1,6 @@
 package ch.sourcepond.osgi.cmpn.metatype;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import static java.util.Objects.requireNonNull;
@@ -14,12 +15,12 @@ public class OptionBuilder<T> {
         return this;
     }
 
-    @XmlElement
+    @XmlAttribute(required = true)
     String getLabel() {
         return label;
     }
 
-    @XmlElement
+    @XmlAttribute(required = true)
     String getValue() {
         return value;
     }

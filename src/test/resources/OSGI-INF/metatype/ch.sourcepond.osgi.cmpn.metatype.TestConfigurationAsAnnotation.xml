@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.2.0" localization="OSGI-INF/l10n/ch.sourcepond.osgi.cmpn.metatype.TestConfigurationAsAnnotation">
-    <OCD id="ch.sourcepond.osgi.cmpn.metatype.TestConfigurationAsAnnotation" name="TestConfigurationAsAnnotation" description="Test configuration">
-        <AD id="getString" type="String" name="Get string" description="Some string" min="3" max="30" default="one"/>
-        <AD id="getLong" type="Long" name="Get long" description="Some long" min="1" max="10" default="1"/>
-        <AD id="getDouble" type="Double" name="Get double" description="Some double" min="1" max="10" default="1"/>
-        <AD id="getFloat" type="Float" name="Get float" description="Some float" min="1" max="10" default="1"/>
-        <AD id="getInteger" type="Integer" name="Get integer" description="Some integer" min="1" max="10" default="1"/>
-        <AD id="getByte" type="Byte" name="Get byte" description="Some byte" min="1" max="10" default="1"/>
-        <AD id="getCharacter" type="Char" name="Get character" description="Some character" min="a" max="z" default="a"/>
-        <AD id="getBoolean" type="Boolean" name="Get boolean" description="Some boolean" default="true"/>
-        <AD id="getShort" type="Short" name="Get short" description="Some short" min="1" max="10" default="1"/>
-        <AD id="getPassword" type="String" name="Get password" description="Some password" min="3" max="30"/>
-        <AD id="getStrings" type="String" cardinality="5" name="Get strings" description="Some strings" min="3" max="30" default="one,two"/>
-        <AD id="getLongs" type="Long" cardinality="5" name="Get longs" description="Some longs" min="1" max="10" default="1,2"/>
-        <AD id="getDoubles" type="Double" cardinality="5" name="Get doubles" description="Some doubles" min="1" max="10" default="1,2"/>
-        <AD id="getFloats" type="Float" cardinality="5" name="Get floats" description="Some floats" min="1" max="10" default="1,2"/>
-        <AD id="getIntegers" type="Integer" cardinality="5" name="Get integers" description="Some integers" min="1" max="10" default="1,2"/>
-        <AD id="getBytes" type="Byte" cardinality="5" name="Get bytes" description="Some bytes" min="1" max="10" default="1,2"/>
-        <AD id="getCharacters" type="Char" cardinality="5" name="Get characters" description="Some characters" min="a" max="z" default="a,b"/>
-        <AD id="getBooleans" type="Boolean" cardinality="5" name="Get booleans" description="Some booleans" default="true,true"/>
-        <AD id="getShorts" type="Short" cardinality="5" name="Get shorts" description="Some shorts" min="1" max="10" default="1,2"/>
-        <AD id="getPasswords" type="String" cardinality="5" name="Get passwords" description="Some passwords" min="3" max="30" default="1,2"/>
-        <AD id="getTimeUnit" type="String" name="Get time unit" description="Some timeunit" default="DAYS">
-            <Option label="NANOSECONDS" value="NANOSECONDS"/>
-            <Option label="MICROSECONDS" value="MICROSECONDS"/>
-            <Option label="MILLISECONDS" value="MILLISECONDS"/>
-            <Option label="SECONDS" value="SECONDS"/>
-            <Option label="MINUTES" value="MINUTES"/>
-            <Option label="HOURS" value="HOURS"/>
-            <Option label="DAYS" value="DAYS"/>
-        </AD>
-        <AD id="getTimeUnits" type="String" cardinality="5" name="Get time units" description="Some timeunits" default="DAYS,HOURS">
-            <Option label="NANOSECONDS" value="NANOSECONDS"/>
-            <Option label="MICROSECONDS" value="MICROSECONDS"/>
-            <Option label="MILLISECONDS" value="MILLISECONDS"/>
-            <Option label="SECONDS" value="SECONDS"/>
-            <Option label="MINUTES" value="MINUTES"/>
-            <Option label="HOURS" value="HOURS"/>
-            <Option label="DAYS" value="DAYS"/>
-        </AD>
-    </OCD>
+<OCD id="ch.sourcepond.osgi.cmpn.metatype.TestConfigurationAsAnnotation" name="TestConfigurationAsAnnotation" description="Test configuration">
+    <AD id="getString" type="String" name="Get string" description="Some string" min="3" max="30" default="one"/>
+    <AD id="getLong" type="Long" name="Get long" description="Some long" min="1" max="10" default="1"/>
+    <AD id="getDouble" type="Double" name="Get double" description="Some double" min="1" max="10" default="1"/>
+    <AD id="getFloat" type="Float" name="Get float" description="Some float" min="1" max="10" default="1"/>
+    <AD id="getInteger" type="Integer" name="Get integer" description="Some integer" min="1" max="10" default="1"/>
+    <AD id="getByte" type="Byte" name="Get byte" description="Some byte" min="1" max="10" default="1"/>
+    <AD id="getCharacter" type="Char" name="Get character" description="Some character" min="a" max="z" default="a"/>
+    <AD id="getBoolean" type="Boolean" name="Get boolean" description="Some boolean" default="true"/>
+    <AD id="getShort" type="Short" name="Get short" description="Some short" min="1" max="10" default="1"/>
+    <AD id="getPassword" type="Password" name="Get password" description="Some password" min="3" max="30"/>
+    <AD id="getStrings" type="String" cardinality="5" required="false" name="Get strings" description="Some strings" min="3" max="30" default="one,two"/>
+    <AD id="getLongs" type="Long" cardinality="5" required="false" name="Get longs" description="Some longs" min="1" max="10" default="1,2"/>
+    <AD id="getDoubles" type="Double" cardinality="5" required="false" name="Get doubles" description="Some doubles" min="1" max="10" default="1,2"/>
+    <AD id="getFloats" type="Float" cardinality="5" required="false" name="Get floats" description="Some floats" min="1" max="10" default="1,2"/>
+    <AD id="getIntegers" type="Integer" cardinality="5" required="false" name="Get integers" description="Some integers" min="1" max="10" default="1,2"/>
+    <AD id="getBytes" type="Byte" cardinality="5" required="false" name="Get bytes" description="Some bytes" min="1" max="10" default="1,2"/>
+    <AD id="getCharacters" type="Char" cardinality="5" required="false" name="Get characters" description="Some characters" min="a" max="z" default="a,b"/>
+    <AD id="getBooleans" type="Boolean" cardinality="5" required="false" name="Get booleans" description="Some booleans" default="true,true"/>
+    <AD id="getShorts" type="Short" cardinality="5" required="false" name="Get shorts" description="Some shorts" min="1" max="10" default="1,2"/>
+    <AD id="getPasswords" type="Password" cardinality="5" required="false" name="Get passwords" description="Some passwords" min="3" max="30"/>
+    <AD id="getTimeUnit" type="String" name="Get time unit" description="Some time unit" default="DAYS">
+        <Option label="NANOSECONDS" value="NANOSECONDS"/>
+        <Option label="MICROSECONDS" value="MICROSECONDS"/>
+        <Option label="MILLISECONDS" value="MILLISECONDS"/>
+        <Option label="SECONDS" value="SECONDS"/>
+        <Option label="MINUTES" value="MINUTES"/>
+        <Option label="HOURS" value="HOURS"/>
+        <Option label="DAYS" value="DAYS"/>
+    </AD>
+    <AD id="getTimeUnits" type="String" cardinality="5" name="Get time units" description="Some time units" default="DAYS,HOURS">
+        <Option label="NANOSECONDS" value="NANOSECONDS"/>
+        <Option label="MICROSECONDS" value="MICROSECONDS"/>
+        <Option label="MILLISECONDS" value="MILLISECONDS"/>
+        <Option label="SECONDS" value="SECONDS"/>
+        <Option label="MINUTES" value="MINUTES"/>
+        <Option label="HOURS" value="HOURS"/>
+        <Option label="DAYS" value="DAYS"/>
+    </AD>
+</OCD>
 </metatype:MetaData>
+

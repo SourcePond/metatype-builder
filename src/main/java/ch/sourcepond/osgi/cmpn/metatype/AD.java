@@ -19,16 +19,17 @@ import java.util.List;
 import java.util.function.Function;
 
 final class AD implements AttributeDefinition {
-    private String id;
-    private int type;
-    private Function<String, ?> converter;
-    private int cardinality;
-    private String name;
-    private String description;
-    private List<Option> options;
-    private List<String> defaultValue;
-    private String min;
-    private String max;
+    private final String id;
+    private final int type;
+    private final Function<String, ?> converter;
+    private final int cardinality;
+    private final String name;
+    private final String description;
+    private final List<Option> options;
+    private final List<String> defaultValue;
+    private final String min;
+    private final String max;
+    private final boolean required;
 
     public AD(final String pId,
               final int pType,
@@ -39,7 +40,8 @@ final class AD implements AttributeDefinition {
               final List<Option> pOptions,
               final List<String> pDefaultValue,
               final String pMin,
-              final String pMax) {
+              final String pMax,
+              final boolean pRequired) {
         id = pId;
         type = pType;
         converter = pConverter;
@@ -50,6 +52,7 @@ final class AD implements AttributeDefinition {
         defaultValue = pDefaultValue;
         min = pMin;
         max = pMax;
+        required = pRequired;
     }
 
     @Override
@@ -78,6 +81,9 @@ final class AD implements AttributeDefinition {
     }
 
     private String[] getOptionEntries(final Function<Option, String> pConverter) {
+        if (options == null) {
+            return null;
+        }
         final String[] entries = new String[options.size()];
         if (entries.length > 0) {
             for (int i = 0; i < entries.length; i++) {
@@ -99,7 +105,11 @@ final class AD implements AttributeDefinition {
 
     @Override
     public String[] getDefaultValue() {
-        return defaultValue.toArray(new String[defaultValue.size()]);
+        return defaultValue == null ? null : defaultValue.toArray(new String[defaultValue.size()]);
+    }
+
+    boolean isRequired() {
+        return required;
     }
 
     @Override
