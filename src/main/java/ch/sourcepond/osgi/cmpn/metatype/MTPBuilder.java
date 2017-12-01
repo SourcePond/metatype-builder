@@ -19,6 +19,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,9 +43,10 @@ public class MTPBuilder {
     }
 
     public <T extends Annotation> OCDBuilder ocd(final Class<T> pConfigDefinition) throws IOException {
-        final String path = format("OSGI-INF/metatype/%s.xml", pConfigDefinition.getName());
-        try (final InputStream in = requireNonNull(requireNonNull(pConfigDefinition, "Config definition is null").
-                getClassLoader().getResourceAsStream(path), format("Resource not found: %s", path))) {
+        final String path = format("/OSGI-INF/metatype/%s.xml", pConfigDefinition.getName());
+        final URL url = requireNonNull(pConfigDefinition.getResource(path), format("File %s not found in classpath", path));
+
+        try (final InputStream in = url.openStream()) {
             return unmarshal(in, MetaData.class).find(this, pConfigDefinition);
         }
     }

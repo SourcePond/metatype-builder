@@ -39,6 +39,8 @@
         <Option label="HOURS" value="HOURS"/>
         <Option label="DAYS" value="DAYS"/>
     </AD>
+    <Icon resource="OSGI-INF/resources/icon16.png" size="16"/>
+    <Icon resource="OSGI-INF/resources/icon32.png" size="32"/>
 </OCD>
 </metatype:MetaData>
 

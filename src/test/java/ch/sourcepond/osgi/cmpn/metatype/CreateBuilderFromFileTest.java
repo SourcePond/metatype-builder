@@ -5,7 +5,8 @@ import org.junit.Test;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
-import sun.jvm.hotspot.utilities.AssertionFailure;
+
+import java.io.IOException;
 
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.DAYS;
@@ -15,6 +16,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -37,7 +39,7 @@ public class CreateBuilderFromFileTest {
                 return pAll[i];
             }
         }
-        throw new AssertionFailure(format("No attribute found for id '%s'", pId));
+        throw new AssertionError(format("No attribute found for id '%s'", pId));
     }
 
     private AttributeDefinition assertBaseAttribute(final AttributeDefinition[] pAll,
@@ -89,14 +91,24 @@ public class CreateBuilderFromFileTest {
         assertArrayEquals(pOptionValue, ad.getOptionValues());
     }
 
+    private void assertIcon(final ObjectClassDefinition pOcd, final int pSize) throws IOException {
+        final String expectedIconPath = format("/OSGI-INF/resources/icon%d.png", pSize);
+        final byte[] expected = toByteArray(getClass().getResource(expectedIconPath));
+        final byte[] actual = toByteArray(pOcd.getIcon(pSize));
+        assertArrayEquals(expected, actual);
+    }
+
     @Test
-    public void verifyUnmodifiedBuilder() {
+    public void verifyUnmodifiedBuilder() throws IOException {
         final MetaTypeProvider provider = mtpBuilder.build();
         final ObjectClassDefinition ocd = provider.getObjectClassDefinition(TestConfigurationAsAnnotation.class.getName(), null);
         assertNotNull(ocd);
         assertEquals("Test configuration", ocd.getDescription());
         assertEquals("TestConfigurationAsAnnotation", ocd.getName());
         assertEquals("ch.sourcepond.osgi.cmpn.metatype.TestConfigurationAsAnnotation", ocd.getID());
+        assertIcon(ocd, 16);
+        assertIcon(ocd, 32);
+
         final AttributeDefinition[] attrs = ocd.getAttributeDefinitions(ALL);
         assertEquals(22, attrs.length);
 

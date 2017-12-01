@@ -19,8 +19,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -90,11 +89,9 @@ final class OCD implements ObjectClassDefinition {
     @Override
     public InputStream getIcon(int size) throws IOException {
         final Optional<Icon> opt = icon.stream().filter(i -> size == i.getSize()).findFirst();
-        try {
-            return opt.isPresent() ? new URI(opt.get().getResource()).toURL().openStream() : null;
-        } catch (final URISyntaxException e) {
-            LOG.warn(e.getMessage(), e);
-            return null;
+        if (opt.isPresent()) {
+            return new URL(getClass().getResource("/"), opt.get().getResource()).openStream();
         }
+        return null;
     }
 }
