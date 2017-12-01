@@ -18,10 +18,10 @@ import org.osgi.service.metatype.AttributeDefinition;
 import java.util.List;
 import java.util.function.Function;
 
-final class AD<T> implements AttributeDefinition {
+final class AD implements AttributeDefinition {
     private String id;
     private int type;
-    private Function<String, T> converter;
+    private Function<String, ?> converter;
     private int cardinality;
     private String name;
     private String description;
@@ -32,7 +32,7 @@ final class AD<T> implements AttributeDefinition {
 
     public AD(final String pId,
               final int pType,
-              final Function<String, T> pConverter,
+              final Function<String, ?> pConverter,
               final int pCardinality,
               final String pName,
               final String pDescription,

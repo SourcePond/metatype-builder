@@ -16,7 +16,6 @@ package ch.sourcepond.osgi.cmpn.metatype;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -28,36 +27,43 @@ import java.util.Set;
 import static java.lang.String.format;
 import static java.util.Locale.getDefault;
 import static java.util.Objects.requireNonNull;
+import static javax.xml.bind.JAXB.unmarshal;
 
 public class MTPBuilder {
     private final Set<String> locales = new HashSet<>();
-    private final Map<String, Map<String, ObjectClassDefinition>> ocds = new HashMap<>();
+    private final Map<String, Map<String, OCDBuilder>> ocdBuilders = new HashMap<>();
 
     public OCDBuilder ocd(final String pId, final String pName) {
         return ocd(pId, pName, getDefault().toString());
     }
 
     public OCDBuilder ocd(final String pId, final String pName, final String pLocale) {
-        return new OCDBuilder(this, pLocale).id(pId).name(pName);
-    }
-
-    void addOCD(final String pLocale, final OCD pOcd) {
-        requireNonNull(pLocale, "Locale is null");
-        requireNonNull(pOcd.getID(), "OCD is null");
-        ocds.computeIfAbsent(pLocale, l -> new HashMap<>()).put(pOcd.getID(), pOcd);
+        return new OCDBuilder().init(this, pLocale, pId, pName);
     }
 
     public <T extends Annotation> OCDBuilder ocd(final Class<T> pConfigDefinition) throws IOException {
-        final String path = format("/OSGI-INF/metatype/%s.xml", pConfigDefinition.getName());
+        final String path = format("OSGI-INF/metatype/%s.xml", pConfigDefinition.getName());
         try (final InputStream in = requireNonNull(requireNonNull(pConfigDefinition, "Config definition is null").
-                        getClassLoader().
-                        getResourceAsStream(format("/OSGI-INF/metatype/%s.xml", pConfigDefinition.getName())),
-                format("Resource not found: %s", path))) {
-            return JAXB.unmarshal(in, MetaData.class).get(pConfigDefinition);
+                getClassLoader().getResourceAsStream(path), format("Resource not found: %s", path))) {
+            return unmarshal(in, MetaData.class).find(this, pConfigDefinition);
         }
     }
 
+    void addOCD(final String pLocale, final OCDBuilder pOcd) {
+        requireNonNull(pLocale, "Locale is null");
+        requireNonNull(pOcd.getId(), "OCD ID is null");
+        ocdBuilders.computeIfAbsent(pLocale, l -> new HashMap<>()).put(pOcd.getId(), pOcd);
+    }
+
     public MetaTypeProvider build() {
-        return new MTP(locales.toArray(new String[0]), ocds);
+        final Map<String, Map<String, OCD>> localeToBuilderMap = new HashMap<>();
+        ocdBuilders.entrySet().forEach(outer -> {
+            final Map<String, OCD> idToOcdMap = new HashMap<>();
+            outer.getValue().entrySet().forEach(inner -> {
+                localeToBuilderMap.computeIfAbsent(outer.getKey(), k -> new HashMap<>()). put(
+                        inner.getKey(), inner.getValue().build());
+            });
+        });
+        return new MTP(locales.toArray(new String[0]), localeToBuilderMap);
     }
 }

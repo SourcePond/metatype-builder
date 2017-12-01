@@ -1,26 +1,19 @@
 package ch.sourcepond.osgi.cmpn.metatype;
 
-import javax.xml.bind.annotation.XmlElement;
-
 class Option {
-    private String label;
-    private String value;
+    private final String label;
+    private final String value;
 
-    @XmlElement
+    public Option(final String pLabel, final String pValue) {
+        label = pLabel;
+        value = pValue;
+    }
+
     public String getLabel() {
         return label;
     }
 
-    @XmlElement
     public String getValue() {
         return value;
-    }
-
-    public void setLabel(String pLabel) {
-        label = pLabel;
-    }
-
-    public void setValue(String pValue) {
-        value = pValue;
     }
 }

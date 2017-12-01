@@ -13,86 +13,89 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-import org.osgi.service.metatype.AttributeDefinition;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 public class OCDBuilder {
-    private final MTPBuilder mtpBuilder;
-    private final String locale;
-    private List<AttributeDefinition> ad;
+    private MTPBuilder mtpBuilder;
+    private String locale;
+    private List<ADBuilder<?>> adBuilders;
     private List<Icon> icon;
     private String name;
     private String id;
     private String description;
 
-    OCDBuilder(final MTPBuilder pMtpBuilder, final String pLocale) {
-        locale = pLocale;
+    OCDBuilder() {
+    }
+
+    OCDBuilder init(final MTPBuilder pMtpBuilder, final String pLocale) {
         mtpBuilder = pMtpBuilder;
+        locale = pLocale;
+        return this;
+    }
+
+    OCDBuilder init(final MTPBuilder pMtpBuilder, final String pLocale, final String pId, final String pName) {
+        init(pMtpBuilder, pLocale);
+        id = pId;
+        name = pName;
+        return this;
+    }
+
+    private static String stringValueOf(final String pValue) {
+        return pValue;
     }
 
     public ADBuilder<Boolean> booleanAD(final String pId) {
-        return new BooleanADBuilder(this).id(pId);
+        return new ADBuilder<Boolean>().init(this).id(pId).type(Type.Boolean);
     }
 
     public ADBuilder<Byte> byteAD(final String pId) {
-        return new ByteADBuilder(this).id(pId);
+        return new ADBuilder<Byte>().init(this).id(pId).type(Type.Byte);
     }
 
     public ADBuilder<Character> charAD(final String pId) {
-        return new CharacterADBuilder(this).id(pId);
+        return new ADBuilder<Character>().init(this).id(pId).type(Type.Char);
     }
 
     public ADBuilder<Double> doubleAD(final String pId) {
-        return new DoubleADBuilder(this).id(pId);
+        return new ADBuilder<Double>().init(this).id(pId).type(Type.Double);
     }
 
     public ADBuilder<Float> floatAD(final String pId) {
-        return new FloatADBuilder(this).id(pId);
+        return new ADBuilder<Float>().init(this).id(pId).type(Type.Float);
     }
 
     public ADBuilder<Integer> intAD(final String pId) {
-        return new IntegerADBuilder(this).id(pId);
+        return new ADBuilder<Integer>().init(this).id(pId).type(Type.Integer);
     }
 
     public ADBuilder<Long> longAD(final String pId) {
-        return new LongADBuilder(this).id(pId);
+        return new ADBuilder<Long>().init(this).id(pId).type(Type.Long);
     }
 
     public ADBuilder<String> passwordAD(final String pId) {
-        return new PasswordADBuilder(this).id(pId);
+        return new ADBuilder<String>().init(this).id(pId).type(Type.String);
     }
 
     public ADBuilder<String> stringAD(final String pId) {
-        return new StringADBuilder(this).id(pId);
+        return new ADBuilder<String>().init(this).id(pId).type(Type.Password);
     }
 
-    public <T extends Enum<T>> ADBuilder<T> enumAD(final String pId, final Class<T> pEnumType) {
-        final ADBuilder<T> builder = new EnumADBuilder<>(this, pEnumType).id(pId);
+    public <T extends Enum<T>> ADBuilder<String> optionsAD(final String pId, final Class<T> pEnumType) {
+        final ADBuilder<String> builder = new ADBuilder<String>().init(this).id(pId).type(Type.String);
         for (final T e : pEnumType.getEnumConstants()) {
-            builder.option(e.name(), e.name());
+            builder.option().label(e.name()).value(e.name()).add();
         }
         return builder;
     }
 
-    void addAD(final AttributeDefinition pAd) {
-        ad.add(pAd);
-    }
-
-    OCDBuilder id(final String pId) {
-        id = pId;
-        return this;
-    }
-
-    OCDBuilder name(final String pName) {
-        name = pName;
-        return this;
+    void addAD(final ADBuilder<?> pAd) {
+        adBuilders.add(pAd);
     }
 
     public OCDBuilder description(final String pDescription) {
@@ -108,12 +111,12 @@ public class OCDBuilder {
         return this;
     }
 
-    @XmlElement
-    List<AttributeDefinition> getAD() {
-        if (ad == null) {
-            ad = new LinkedList<>();
+    @XmlElement(name = "AD")
+    List<ADBuilder<?>> getAD() {
+        if (adBuilders == null) {
+            adBuilders = new LinkedList<>();
         }
-        return ad;
+        return adBuilders;
     }
 
     @XmlElement(name = "Icon")
@@ -139,13 +142,35 @@ public class OCDBuilder {
         return description;
     }
 
-    public MTPBuilder add() {
-        final OCD ocd = new OCD(name,
+    void setName(final String pName) {
+        name = pName;
+    }
+
+    void setId(final String pId) {
+        id = pId;
+    }
+
+    void setDescription(final String pDescription) {
+        description = pDescription;
+    }
+
+    OCD build() {
+        final List<AD> ad;
+        if (adBuilders == null) {
+            ad = emptyList();
+        } else {
+            ad = adBuilders.stream().map(b -> b.init(this).build()).collect(toList());
+
+        }
+        return new OCD(name,
                 id,
                 description,
-                ad == null ? emptyList() : ad,
+                adBuilders == null ? emptyList() : ad,
                 icon == null ? emptyList() : icon);
-        mtpBuilder.addOCD(locale, ocd);
+    }
+
+    public MTPBuilder add() {
+        mtpBuilder.addOCD(locale, this);
         return mtpBuilder;
     }
 }

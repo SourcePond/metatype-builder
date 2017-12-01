@@ -34,13 +34,13 @@ final class OCD implements ObjectClassDefinition {
     private final String name;
     private final String id;
     private final String description;
-    private final List<AttributeDefinition> ad;
+    private final List<AD> ad;
     private final List<Icon> icon;
 
     public OCD(final String pName,
                final String pId,
                final String pDescription,
-               final List<AttributeDefinition> pAd,
+               final List<AD> pAd,
                final List<Icon> pIcon) {
         name = pName;
         id = pId;

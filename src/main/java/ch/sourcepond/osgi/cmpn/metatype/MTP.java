@@ -23,9 +23,9 @@ import static java.util.Locale.getDefault;
 
 final class MTP implements MetaTypeProvider {
     private final String[] locales;
-    private final Map<String, Map<String, ObjectClassDefinition>> ocds;
+    private final Map<String, Map<String, OCD>> ocds;
 
-    public MTP(final String[] pLocales, final Map<String, Map<String, ObjectClassDefinition>> pOcds) {
+    public MTP(final String[] pLocales, final Map<String, Map<String, OCD>> pOcds) {
         locales = pLocales;
         ocds = pOcds;
     }
@@ -33,7 +33,7 @@ final class MTP implements MetaTypeProvider {
     @Override
     public ObjectClassDefinition getObjectClassDefinition(final String pId, final String pLocale) {
         final String locale = pLocale == null ? getDefault().toString() : pLocale;
-        final Map<String, ObjectClassDefinition> subOCDs = ocds.get(locale);
+        final Map<String, OCD> subOCDs = ocds.get(locale);
         if (subOCDs == null) {
             throw new IllegalArgumentException(format("No OCD found for locale '%s'", locale));
         }
