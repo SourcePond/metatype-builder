@@ -13,20 +13,5 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-class Icon {
-    private final String resource;
-    private final int size;
-
-    public Icon(final String pResource, final int pSize) {
-        resource = pResource;
-        size = pSize;
-    }
-
-    public String getResource() {
-        return resource;
-    }
-
-    public int getSize() {
-        return size;
-    }
+public class OCDBuilderTest {
 }

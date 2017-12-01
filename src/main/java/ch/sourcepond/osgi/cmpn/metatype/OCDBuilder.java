@@ -25,7 +25,7 @@ public class OCDBuilder {
     private MTPBuilder mtpBuilder;
     private String locale;
     private List<ADBuilder<?>> adBuilders;
-    private List<Icon> icon;
+    private List<IconBuilder> iconBuilders;
     private String name;
     private String id;
     private String description;
@@ -103,12 +103,8 @@ public class OCDBuilder {
         return this;
     }
 
-    public OCDBuilder icon(final int pSize, final String pResource) {
-        final Icon ic = new Icon();
-        ic.setSize(pSize);
-        ic.setResource(pResource);
-        icon.add(ic);
-        return this;
+    public IconBuilder icon() {
+        return new IconBuilder().init(this);
     }
 
     @XmlElement(name = "AD")
@@ -120,11 +116,11 @@ public class OCDBuilder {
     }
 
     @XmlElement(name = "Icon")
-    List<Icon> getIcon() {
-        if (icon == null) {
-            icon = new LinkedList<>();
+    List<IconBuilder> getIcon() {
+        if (iconBuilders == null) {
+            iconBuilders = new LinkedList<>();
         }
-        return icon;
+        return iconBuilders;
     }
 
     @XmlAttribute(required = true)
@@ -155,18 +151,11 @@ public class OCDBuilder {
     }
 
     OCD build() {
-        final List<AD> ad;
-        if (adBuilders == null) {
-            ad = emptyList();
-        } else {
-            ad = adBuilders.stream().map(b -> b.init(this).build()).collect(toList());
-
-        }
         return new OCD(name,
                 id,
                 description,
-                adBuilders == null ? emptyList() : ad,
-                icon == null ? emptyList() : icon);
+                adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.init(this).build()).collect(toList()),
+                iconBuilders == null ? emptyList() : iconBuilders.stream().map(i -> i.init(this).build()).collect(toList()));
     }
 
     public MTPBuilder add() {
