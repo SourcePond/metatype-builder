@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 import static org.slf4j.LoggerFactory.getLogger;
 
 final class OCD implements ObjectClassDefinition {
-    private static final Logger LOG = getLogger(OCD.class);
-    private static final int REQUIRED_ATTR = 0;
     private static final AttributeDefinition[] TEMPLATE_ARRAY = new AttributeDefinition[0];
     private final String name;
     private final String id;
