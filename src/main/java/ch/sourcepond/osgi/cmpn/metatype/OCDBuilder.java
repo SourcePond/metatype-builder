@@ -151,11 +151,9 @@ public class OCDBuilder {
     }
 
     OCD build() {
-        return new OCD(name,
-                id,
-                description,
-                adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.init(this).build()).collect(toList()),
-                iconBuilders == null ? emptyList() : iconBuilders.stream().map(i -> i.init(this).build()).collect(toList()));
+        return new OCD(id, iconBuilders == null ? emptyList() : iconBuilders.stream().map(i -> i.init(this).build()).collect(toList()), adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.init(this).build()).collect(toList()), name,
+                description
+        );
     }
 
     public MTPBuilder add() {

@@ -15,7 +15,6 @@ package ch.sourcepond.osgi.cmpn.metatype;
 
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +23,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static java.util.stream.Collectors.toList;
 
-final class OCD implements ObjectClassDefinition {
+final class OCD implements ObjectClassDefinition, Localizable<OCD> {
     private static final AttributeDefinition[] TEMPLATE_ARRAY = new AttributeDefinition[0];
     private final String name;
     private final String id;
@@ -34,16 +33,25 @@ final class OCD implements ObjectClassDefinition {
     private final List<AD> ad;
     private final List<Icon> icon;
 
-    public OCD(final String pName,
-               final String pId,
-               final String pDescription,
+    public OCD(final String pId,
+               final List<Icon> pIcon,
                final List<AD> pAd,
-               final List<Icon> pIcon) {
+               final String pName,
+               final String pDescription) {
         name = pName;
         id = pId;
         description = pDescription;
         ad = pAd;
         icon = pIcon;
+    }
+
+    @Override
+    public OCD cloneLocalized(final Localizer pLocalizer) {
+        return new OCD(id,
+                icon,
+                ad.stream().map(ad -> ad.cloneLocalized(pLocalizer)).collect(toList()),
+                pLocalizer.localize(name),
+                pLocalizer.localize(description));
     }
 
     @Override
@@ -70,11 +78,11 @@ final class OCD implements ObjectClassDefinition {
                 break;
             }
             case REQUIRED: {
-                ads = ad.stream().filter(ad -> ad.isRequired()).collect(Collectors.toList()).toArray(TEMPLATE_ARRAY);
+                ads = ad.stream().filter(ad -> ad.isRequired()).collect(toList()).toArray(TEMPLATE_ARRAY);
                 break;
             }
             case OPTIONAL: {
-                ads = ad.stream().filter(ad -> !ad.isRequired()).collect(Collectors.toList()).toArray(TEMPLATE_ARRAY);
+                ads = ad.stream().filter(ad -> !ad.isRequired()).collect(toList()).toArray(TEMPLATE_ARRAY);
                 break;
             }
             default: {

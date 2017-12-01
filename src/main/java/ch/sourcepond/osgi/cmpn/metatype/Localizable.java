@@ -13,25 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-class Option implements Localizable<Option> {
-    private final String label;
-    private final String value;
+interface Localizable<T> {
 
-    public Option(final String pLabel, final String pValue) {
-        label = pLabel;
-        value = pValue;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public Option cloneLocalized(final Localizer pLocalizer) {
-        return new Option(pLocalizer.localize(label), value);
-    }
+    T cloneLocalized(Localizer pLocalizer);
 }

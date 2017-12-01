@@ -17,8 +17,11 @@ import org.osgi.service.metatype.AttributeDefinition;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-final class AD implements AttributeDefinition {
+import static java.util.stream.Collectors.toList;
+
+final class AD implements AttributeDefinition, Localizable<AD> {
     private final String id;
     private final int type;
     private final Function<String, ?> converter;
@@ -53,6 +56,21 @@ final class AD implements AttributeDefinition {
         min = pMin;
         max = pMax;
         required = pRequired;
+    }
+
+    @Override
+    public AD cloneLocalized(final Localizer pLocalizer) {
+        return new AD(id,
+                type,
+                converter,
+                cardinality,
+                pLocalizer.localize(name),
+                pLocalizer.localize(description),
+                options == null ? null : options.stream().map(opt -> opt.cloneLocalized(pLocalizer)).collect(toList()),
+                defaultValue,
+                min,
+                max,
+                required);
     }
 
     @Override
