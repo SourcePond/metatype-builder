@@ -14,7 +14,6 @@ limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 
 import static java.util.Objects.requireNonNull;
 

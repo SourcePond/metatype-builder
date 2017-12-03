@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -39,6 +38,13 @@ public class ADBuilder<T> {
     private boolean required = true;
 
     ADBuilder() {
+    }
+
+    void initAfterUnmarshal(final OCDBuilder pOcdBuilder) {
+        ocdBuilder = pOcdBuilder;
+        if (optionBuilders != null) {
+            optionBuilders.forEach(optionBuilder -> optionBuilder.init(this));
+        }
     }
 
     ADBuilder<T> init(final OCDBuilder pOCDBuilder) {

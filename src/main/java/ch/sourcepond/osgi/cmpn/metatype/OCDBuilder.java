@@ -32,13 +32,13 @@ public class OCDBuilder {
     OCDBuilder() {
     }
 
-    OCDBuilder init(final MTPBuilder pMtpBuilder) {
+    void initAfterUnmarshal(final MTPBuilder pMtpBuilder) {
         mtpBuilder = pMtpBuilder;
-        return this;
+        adBuilders.forEach(adBuilder -> adBuilder.initAfterUnmarshal(this));
     }
 
     OCDBuilder init(final MTPBuilder pMtpBuilder, final String pId, final String pName) {
-        init(pMtpBuilder);
+        mtpBuilder = pMtpBuilder;
         id = pId;
         name = pName;
         return this;

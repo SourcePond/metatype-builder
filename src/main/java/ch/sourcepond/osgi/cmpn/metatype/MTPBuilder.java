@@ -24,14 +24,10 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -46,10 +42,19 @@ import static org.osgi.framework.FrameworkUtil.getBundle;
 public class MTPBuilder {
     private final Map<String, OCDBuilder> ocdBuilderMap = new HashMap<>();
     private final List<OCDBuilder> ocdBuilders = new LinkedList<>();
-    private Class<?> resourcesAccessor = getClass();
+    private Bundle bundle;
     private String localization;
 
-    public static <T extends Annotation> MTPBuilder load(final Class<T> pConfigDefinition) {
+    MTPBuilder() {
+    }
+
+    public static MTPBuilder create(final Bundle pBundle) {
+        final MTPBuilder builder = new MTPBuilder();
+        builder.setBundle(pBundle);
+        return builder;
+    }
+
+    public static <T extends Annotation> MTPBuilder create(final Class<T> pConfigDefinition) {
         final String path = format("/OSGI-INF/metatype/%s.xml", pConfigDefinition.getName());
         final URL url = requireNonNull(pConfigDefinition.getResource(path), format("File %s not found in classpath", path));
 
@@ -59,8 +64,20 @@ public class MTPBuilder {
         } catch (final IOException e) {
             throw new UncheckedIOException(e.getMessage(), e);
         }
-        mtpBuilder.resourcesAccessor = pConfigDefinition;
+        mtpBuilder.initAfterUnmarshal();
+        mtpBuilder.setBundle(getBundle(pConfigDefinition));
         return mtpBuilder;
+    }
+
+    private void initAfterUnmarshal() {
+        ocdBuilders.forEach(ocdBuilder -> {
+            ocdBuilder.initAfterUnmarshal(this);
+            ocdBuilderMap.put(ocdBuilder.getId(), ocdBuilder);
+        });
+    }
+
+    void setBundle(final Bundle pBundle) {
+        bundle = requireNonNull(pBundle, "Bundle is null");
     }
 
     @XmlAttribute
@@ -87,7 +104,6 @@ public class MTPBuilder {
             ocdMap.put(entry.getKey(), entry.getValue().build());
         });
 
-        final Bundle bundle = requireNonNull(getBundle(resourcesAccessor), format("No bundle for %s", resourcesAccessor));
         String baseName = localization;
         if (baseName == null) {
             baseName = bundle.getHeaders().get(BUNDLE_LOCALIZATION);
@@ -95,50 +111,7 @@ public class MTPBuilder {
         if (baseName == null) {
             baseName = BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
         }
-        int index = baseName.indexOf('/');
-        String pattern = baseName.substring(index + 1) + "*.properties";
-        String path = index == -1 ? "" : baseName.substring(0, index);
-        final Enumeration<URL> urls = bundle.findEntries(path, pattern, false);
 
-        String[] locales = null;
-        if (urls != null) {
-            final List<String> localeList = new LinkedList<>();
-            while (urls.hasMoreElements()) {
-                final URL url = urls.nextElement();
-                path = url.getPath();
-                index = path.lastIndexOf('/');
-                pattern = index == -1 ? path : path.substring(index + 1);
-
-                index = pattern.indexOf('_');
-                if (index != -1) {
-                    final String[] items = pattern.substring(index + 1).replace(".properties", "").split("_");
-                    Locale locale;
-                    switch (items.length) {
-                        case 1: {
-                            locale = new Locale(items[0]);
-                            break;
-                        }
-                        case 2: {
-                            locale = new Locale(items[0], items[1]);
-                            break;
-                        }
-                        case 3: {
-                            locale = new Locale(items[0], items[1], items[2]);
-                            break;
-                        }
-                        default: {
-                            locale = null;
-                        }
-                    }
-
-                    if (locale != null) {
-                        localeList.add(locale.toString());
-                    }
-                }
-            }
-            locales = localeList.toArray(new String[localeList.size()]);
-        }
-
-        return new MTP(new LocalizationFactory(baseName, locales), ocdMap);
+        return new MTP(new LocalizationFactory(baseName, bundle), ocdMap);
     }
 }

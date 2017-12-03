@@ -15,12 +15,17 @@ package ch.sourcepond.osgi.cmpn.metatype;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.Hashtable;
 
+import static ch.sourcepond.osgi.cmpn.metatype.MTPBuilder.create;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
@@ -34,14 +39,21 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.osgi.service.metatype.ObjectClassDefinition.ALL;
 
 public class CreateBuilderFromFileTest {
-    private final MTPBuilder mtpBuilder = MTPBuilder.load(TestConfigurationAsAnnotation.class);
+    private final Bundle bundle = mock(Bundle.class);
+    private final Hashtable<String, String> headers = new Hashtable<>();
+    private MTPBuilder mtpBuilder;
     private OCDBuilder ocdBuilder;
 
     @Before
     public void setup() throws Exception {
+        when(bundle.getHeaders()).thenReturn(headers);
+        mtpBuilder = create((Class<? extends Annotation>) new TestClassLoader(bundle).loadClass(
+                TestConfigurationAsAnnotation.class.getName()));
         ocdBuilder = mtpBuilder.getOCD().get(0);
         ocdBuilder.add();
     }
