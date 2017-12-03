@@ -77,11 +77,11 @@ public class OCDBuilder {
     }
 
     public ADBuilder<String> passwordAD(final String pId) {
-        return new ADBuilder<String>().init(this).id(pId).type(Type.String);
+        return new ADBuilder<String>().init(this).id(pId).type(Type.Password);
     }
 
     public ADBuilder<String> stringAD(final String pId) {
-        return new ADBuilder<String>().init(this).id(pId).type(Type.Password);
+        return new ADBuilder<String>().init(this).id(pId).type(Type.String);
     }
 
     public <T extends Enum<T>> ADBuilder<String> optionsAD(final String pId, final Class<T> pEnumType) {
@@ -93,7 +93,7 @@ public class OCDBuilder {
     }
 
     void addAD(final ADBuilder<?> pAd) {
-        adBuilders.add(pAd);
+        getAD().add(pAd);
     }
 
     public OCDBuilder description(final String pDescription) {

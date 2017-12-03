@@ -13,21 +13,22 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype.tests;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
+import org.osgi.service.metatype.ObjectClassDefinition;
 
 import javax.inject.Inject;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -47,7 +48,7 @@ public class MTPBuilderIntegrationTest {
     public Option[] configure() {
         return new Option[]{
                 junitBundles(),
-                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder").version("0.1-SNAPSHOT"),
+                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-lib").version("0.1-SNAPSHOT"),
                 mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-testbundle").version("0.1-SNAPSHOT"),
                 mavenBundle("org.apache.felix", "org.apache.felix.metatype").version("1.1.6")
         };
@@ -65,8 +66,23 @@ public class MTPBuilderIntegrationTest {
     }
 
     @Test
-    public void testIt() {
+    public void verifyBasicOCD() {
         final MetaTypeInformation info = metaTypeService.getMetaTypeInformation(testBundle);
-        info.getLocales();
+        final ObjectClassDefinition def = info.getObjectClassDefinition("someId.pid", null);
+        final AttributeDefinition[] attrs = def.getAttributeDefinitions(ObjectClassDefinition.ALL);
+        assertEquals(1, attrs.length);
+        assertEquals(AttributeDefinition.STRING, attrs[0].getType());
+        assertEquals("someString", attrs[0].getID());
+    }
+
+    @Test
+    public void verifyLocales() {
+        final MetaTypeInformation info = metaTypeService.getMetaTypeInformation(testBundle);
+        final ObjectClassDefinition def = info.getObjectClassDefinition("someId.pid", null);
+        final String[] locales = info.getLocales();
+        assertEquals(3, locales.length);
+        assertEquals("de", locales[0]);
+        assertEquals("de_CH_1024", locales[1]);
+        assertEquals("de_CH", locales[2]);
     }
 }

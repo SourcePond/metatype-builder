@@ -9,6 +9,7 @@ apply plugin: 'idea'
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -23,6 +24,6 @@ dependencies {
 
 sourceSets {
     test {
-        output.resourcesDir = file('build/classes/test')
+        output.resourcesDir = file('build/classes/java/test')
     }
 }

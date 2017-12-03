@@ -29,7 +29,7 @@ class Localization {
     }
 
     public String localize(final String pKey) {
-        if (pKey.charAt(0) == '%') {
+        if (pKey != null && pKey.charAt(0) == '%') {
             return resourceBundle.getString(pKey.substring(1));
         }
         return pKey;

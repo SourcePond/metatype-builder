@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ResourceBundle;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class LocalizationTest {
     private static final String EXPECTED_KEY = "someKey";
@@ -35,5 +36,6 @@ public class LocalizationTest {
     public void localize() {
         assertEquals(EXPECTED_LOCALIZED_VALUE, localization.localize("%" + EXPECTED_KEY));
         assertEquals(EXPECTED_KEY, localization.localize(EXPECTED_KEY));
+        assertNull(localization.localize(null));
     }
 }

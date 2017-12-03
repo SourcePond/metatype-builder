@@ -16,11 +16,14 @@ package ch.sourcepond.osgi.cmpn.metatype;
 import org.osgi.framework.Bundle;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import static java.util.Collections.sort;
 
 class LocalizationFactory {
     private static final int LANGUAGE = 0;
@@ -35,7 +38,7 @@ class LocalizationFactory {
     }
 
     private String[] createLocales(final Bundle pBundle) {
-        int index = baseName.indexOf('/');
+        int index = baseName.lastIndexOf('/');
         String pattern = baseName.substring(index + 1) + "*.properties";
         String path = index == -1 ? "" : baseName.substring(0, index);
         final Enumeration<URL> urls = pBundle.findEntries(path, pattern, false);
@@ -49,6 +52,7 @@ class LocalizationFactory {
                 addLocale(index == -1 ? path : path.substring(index + 1), localeList);
             }
         }
+        sort(localeList);
         return localeList.isEmpty() ? null : localeList.toArray(new String[0]);
     }
 

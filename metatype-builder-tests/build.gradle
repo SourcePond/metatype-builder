@@ -7,11 +7,13 @@ apply plugin: 'idea'
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     testCompile project(':metatype-builder-testbundle')
+    testCompile 'org.apache.felix:org.apache.felix.metatype:1.1.6'
     testCompile 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.javax-inject:1_2'
     testCompile 'org.slf4j:slf4j-api:1.7.25'
     testCompile 'org.ops4j.pax.exam:pax-exam-container-native:4.11.0'
