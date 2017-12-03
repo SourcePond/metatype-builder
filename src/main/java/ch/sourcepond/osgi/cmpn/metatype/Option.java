@@ -31,7 +31,7 @@ class Option implements Localizable<Option> {
     }
 
     @Override
-    public Option localize(final Localizer pLocalizer) {
-        return new Option(pLocalizer.localize(label), value);
+    public Option localize(final Localization pLocalization) {
+        return new Option(pLocalization.localize(label), value);
     }
 }

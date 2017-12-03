@@ -23,68 +23,69 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 class LocalizationFactory {
-    private volatile String[] supportedLocales;
+    private static final int LANGUAGE = 0;
+    private static final int COUNTRY = 1;
+    private static final int VARIANT = 2;
     private final String baseName;
-    private final Bundle bundle;
+    private final String[] supportedLocales;
 
     public LocalizationFactory(final String pBaseName, final Bundle pBundle) {
         baseName = pBaseName;
-        bundle = pBundle;
+        supportedLocales = createLocales(pBundle);
+    }
+
+    private String[] createLocales(final Bundle pBundle) {
+        int index = baseName.indexOf('/');
+        String pattern = baseName.substring(index + 1) + "*.properties";
+        String path = index == -1 ? "" : baseName.substring(0, index);
+        final Enumeration<URL> urls = pBundle.findEntries(path, pattern, false);
+
+        final List<String> localeList = new LinkedList<>();
+        if (urls != null) {
+            while (urls.hasMoreElements()) {
+                final URL url = urls.nextElement();
+                path = url.getPath();
+                index = path.lastIndexOf('/');
+                addLocale(index == -1 ? path : path.substring(index + 1), localeList);
+            }
+        }
+        return localeList.isEmpty() ? null : localeList.toArray(new String[0]);
+    }
+
+    private void addLocale(final String pattern, final List<String> pLocales) {
+        final int index = pattern.indexOf('_');
+        if (index != -1) {
+            final String[] items = pattern.substring(index + 1).replace(".properties", "").split("_");
+            Locale locale;
+            switch (items.length - 1) {
+                case LANGUAGE: {
+                    locale = new Locale(items[LANGUAGE]);
+                    break;
+                }
+                case COUNTRY: {
+                    locale = new Locale(items[LANGUAGE], items[COUNTRY]);
+                    break;
+                }
+                case VARIANT: {
+                    locale = new Locale(items[LANGUAGE], items[COUNTRY], items[VARIANT]);
+                    break;
+                }
+                default: {
+                    locale = null;
+                }
+            }
+
+            if (locale != null) {
+                pLocales.add(locale.toString());
+            }
+        }
     }
 
     public String[] getLocales() {
-        if (supportedLocales == null) {
-            synchronized (this) {
-                if (supportedLocales == null) {
-                    int index = baseName.indexOf('/');
-                    String pattern = baseName.substring(index + 1) + "*.properties";
-                    String path = index == -1 ? "" : baseName.substring(0, index);
-                    final Enumeration<URL> urls = bundle.findEntries(path, pattern, false);
-
-                    if (urls != null) {
-                        final List<String> localeList = new LinkedList<>();
-                        while (urls.hasMoreElements()) {
-                            final URL url = urls.nextElement();
-                            path = url.getPath();
-                            index = path.lastIndexOf('/');
-                            pattern = index == -1 ? path : path.substring(index + 1);
-
-                            index = pattern.indexOf('_');
-                            if (index != -1) {
-                                final String[] items = pattern.substring(index + 1).replace(".properties", "").split("_");
-                                Locale locale;
-                                switch (items.length) {
-                                    case 1: {
-                                        locale = new Locale(items[0]);
-                                        break;
-                                    }
-                                    case 2: {
-                                        locale = new Locale(items[0], items[1]);
-                                        break;
-                                    }
-                                    case 3: {
-                                        locale = new Locale(items[0], items[1], items[2]);
-                                        break;
-                                    }
-                                    default: {
-                                        locale = null;
-                                    }
-                                }
-
-                                if (locale != null) {
-                                    localeList.add(locale.toString());
-                                }
-                            }
-                        }
-                        supportedLocales = localeList.toArray(new String[localeList.size()]);
-                    }
-                }
-            }
-        }
         return supportedLocales;
     }
 
-    public Localizer create(final String pLocale) {
-        return new Localizer(ResourceBundle.getBundle(baseName, new Locale(pLocale)), pLocale);
+    public Localization create(final String pLocale) {
+        return new Localization(ResourceBundle.getBundle(baseName, new Locale(pLocale)), pLocale);
     }
 }

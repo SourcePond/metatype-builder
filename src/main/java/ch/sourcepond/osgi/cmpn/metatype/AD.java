@@ -58,14 +58,14 @@ final class AD implements AttributeDefinition, Localizable<AD> {
     }
 
     @Override
-    public AD localize(final Localizer pLocalizer) {
+    public AD localize(final Localization pLocalization) {
         return new AD(id,
                 type,
                 converter,
                 cardinality,
-                pLocalizer.localize(name),
-                pLocalizer.localize(description),
-                options == null ? null : options.stream().map(opt -> opt.localize(pLocalizer)).collect(toList()),
+                pLocalization.localize(name),
+                pLocalization.localize(description),
+                options == null ? null : options.stream().map(opt -> opt.localize(pLocalization)).collect(toList()),
                 defaultValue,
                 min,
                 max,

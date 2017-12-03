@@ -48,12 +48,12 @@ final class OCD implements ObjectClassDefinition, Localizable<OCD> {
     }
 
     @Override
-    public OCD localize(final Localizer pLocalizer) {
-        return localizedClones.computeIfAbsent(pLocalizer.getLocale(), locale -> new OCD(id,
+    public OCD localize(final Localization pLocalization) {
+        return localizedClones.computeIfAbsent(pLocalization.getLocale(), locale -> new OCD(id,
                 icon,
-                ad.stream().map(ad -> ad.localize(pLocalizer)).collect(toList()),
-                pLocalizer.localize(name),
-                pLocalizer.localize(description)));
+                ad.stream().map(ad -> ad.localize(pLocalization)).collect(toList()),
+                pLocalization.localize(name),
+                pLocalization.localize(description)));
     }
 
     @Override

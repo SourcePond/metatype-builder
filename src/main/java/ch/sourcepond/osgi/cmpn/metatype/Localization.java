@@ -13,5 +13,25 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-public class OCDBuilderTest {
+import java.util.ResourceBundle;
+
+class Localization {
+    private final ResourceBundle resourceBundle;
+    private final String locale;
+
+    public Localization(final ResourceBundle pResourceBundle, final String pLocale) {
+        resourceBundle = pResourceBundle;
+        locale = pLocale;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public String localize(final String pKey) {
+        if (pKey.charAt(0) == '%') {
+            return resourceBundle.getString(pKey.substring(1));
+        }
+        return pKey;
+    }
 }
