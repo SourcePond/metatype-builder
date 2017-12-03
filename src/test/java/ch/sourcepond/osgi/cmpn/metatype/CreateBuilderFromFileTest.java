@@ -15,7 +15,6 @@ package ch.sourcepond.osgi.cmpn.metatype;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeProvider;
@@ -125,6 +124,7 @@ public class CreateBuilderFromFileTest {
 
     @Test
     public void verifyUnmodifiedBuilder() throws IOException {
+        assertEquals(format("OSGI-INF/l10n/%s", TestConfigurationAsAnnotation.class.getName()), mtpBuilder.getLocalization());
         final MetaTypeProvider provider = mtpBuilder.build();
         final ObjectClassDefinition ocd = provider.getObjectClassDefinition(TestConfigurationAsAnnotation.class.getName(), null);
         assertNotNull(ocd);
