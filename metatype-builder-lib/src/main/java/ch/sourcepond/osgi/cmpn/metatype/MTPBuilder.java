@@ -81,16 +81,16 @@ public class MTPBuilder {
     }
 
     @XmlAttribute
-    public String getLocalization() {
+    String getLocalization() {
         return localization;
     }
 
-    public void setLocalization(final String pLocalization) {
+    void setLocalization(final String pLocalization) {
         localization = pLocalization;
     }
 
     @XmlElement(name = "OCD")
-    public List<OCDBuilder> getOCD() {
+    List<OCDBuilder> getOCD() {
         return ocdBuilders;
     }
 

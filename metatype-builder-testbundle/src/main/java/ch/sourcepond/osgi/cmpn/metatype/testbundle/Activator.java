@@ -11,17 +11,21 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
-package ch.sourcepond.osgi.cmpn.metatype.tests;
+package ch.sourcepond.osgi.cmpn.metatype.testbundle;
 
 import ch.sourcepond.osgi.cmpn.metatype.MTPBuilder;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.metatype.MetaTypeProvider;
 
-public class TestActivator implements BundleActivator {
+public class Activator implements BundleActivator {
 
     @Override
     public void start(final BundleContext context) throws Exception {
         final MTPBuilder builder = MTPBuilder.create(context.getBundle());
+        final MetaTypeProvider provider = builder.ocd("someId", "someName").
+                stringAD("someString").add().add().build();
+        context.registerService(MetaTypeProvider.class, provider, null);
     }
 
     @Override

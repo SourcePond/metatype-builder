@@ -1,4 +1,5 @@
 rootProject.name = 'metatype-builder'
 include 'metatype-builder-tests'
 include 'metatype-builder-lib'
+include 'metatype-builder-testbundle'
 
