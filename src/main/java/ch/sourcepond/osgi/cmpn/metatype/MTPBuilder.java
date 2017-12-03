@@ -85,6 +85,10 @@ public class MTPBuilder {
         return localization;
     }
 
+    public void setLocalization(final String pLocalization) {
+        localization = pLocalization;
+    }
+
     @XmlElement(name = "OCD")
     public List<OCDBuilder> getOCD() {
         return ocdBuilders;
