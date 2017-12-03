@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    compile project(':metatype-builder-lib')
     compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'org.osgi:org.osgi.core:6.0.0'
     compile 'org.osgi:osgi.cmpn:6.0.0'
