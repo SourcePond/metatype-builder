@@ -44,10 +44,6 @@ public class OCDBuilder {
         return this;
     }
 
-    private static String stringValueOf(final String pValue) {
-        return pValue;
-    }
-
     public ADBuilder<Boolean, Boolean> booleanAD(final String pId) {
         return new ADBuilder<Boolean, Boolean>().setParent(this).id(pId).type(Type.BOOLEAN);
     }
