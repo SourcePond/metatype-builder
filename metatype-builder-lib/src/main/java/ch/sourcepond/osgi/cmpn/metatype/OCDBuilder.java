@@ -49,43 +49,43 @@ public class OCDBuilder {
     }
 
     public ADBuilder<Boolean> booleanAD(final String pId) {
-        return new ADBuilder<Boolean>().init(this).id(pId).type(Type.Boolean);
+        return new ADBuilder<Boolean>().setParent(this).id(pId).type(Type.Boolean);
     }
 
     public ADBuilder<Byte> byteAD(final String pId) {
-        return new ADBuilder<Byte>().init(this).id(pId).type(Type.Byte);
+        return new ADBuilder<Byte>().setParent(this).id(pId).type(Type.Byte);
     }
 
     public ADBuilder<Character> charAD(final String pId) {
-        return new ADBuilder<Character>().init(this).id(pId).type(Type.Char);
+        return new ADBuilder<Character>().setParent(this).id(pId).type(Type.Char);
     }
 
     public ADBuilder<Double> doubleAD(final String pId) {
-        return new ADBuilder<Double>().init(this).id(pId).type(Type.Double);
+        return new ADBuilder<Double>().setParent(this).id(pId).type(Type.Double);
     }
 
     public ADBuilder<Float> floatAD(final String pId) {
-        return new ADBuilder<Float>().init(this).id(pId).type(Type.Float);
+        return new ADBuilder<Float>().setParent(this).id(pId).type(Type.Float);
     }
 
     public ADBuilder<Integer> intAD(final String pId) {
-        return new ADBuilder<Integer>().init(this).id(pId).type(Type.Integer);
+        return new ADBuilder<Integer>().setParent(this).id(pId).type(Type.Integer);
     }
 
     public ADBuilder<Long> longAD(final String pId) {
-        return new ADBuilder<Long>().init(this).id(pId).type(Type.Long);
+        return new ADBuilder<Long>().setParent(this).id(pId).type(Type.Long);
     }
 
     public ADBuilder<String> passwordAD(final String pId) {
-        return new ADBuilder<String>().init(this).id(pId).type(Type.Password);
+        return new ADBuilder<String>().setParent(this).id(pId).type(Type.Password);
     }
 
     public ADBuilder<String> stringAD(final String pId) {
-        return new ADBuilder<String>().init(this).id(pId).type(Type.String);
+        return new ADBuilder<String>().setParent(this).id(pId).type(Type.String);
     }
 
     public <T extends Enum<T>> ADBuilder<String> optionsAD(final String pId, final Class<T> pEnumType) {
-        final ADBuilder<String> builder = new ADBuilder<String>().init(this).id(pId).type(Type.String);
+        final ADBuilder<String> builder = new ADBuilder<String>().setParent(this).id(pId).type(Type.String);
         for (final T e : pEnumType.getEnumConstants()) {
             builder.option().label(e.name()).value(e.name()).add();
         }
@@ -149,7 +149,7 @@ public class OCDBuilder {
     }
 
     OCD build() {
-        return new OCD(id, iconBuilders == null ? emptyList() : iconBuilders.stream().map(i -> i.init(this).build()).collect(toList()), adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.init(this).build()).collect(toList()), name,
+        return new OCD(id, iconBuilders == null ? emptyList() : iconBuilders.stream().map(i -> i.init(this).build()).collect(toList()), adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.setParent(this).build()).collect(toList()), name,
                 description
         );
     }

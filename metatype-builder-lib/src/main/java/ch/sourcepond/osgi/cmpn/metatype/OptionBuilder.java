@@ -18,12 +18,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import static java.util.Objects.requireNonNull;
 
 public class OptionBuilder<T> {
-    private ADBuilder<T> adBuilder;
+    private ADBuilder<T> parent;
     private String label;
     private String value;
 
-    OptionBuilder<T> init(ADBuilder<T> pAdBuilder) {
-        adBuilder = pAdBuilder;
+    OptionBuilder<T> setParent(final ADBuilder<T> pParent) {
+        parent = pParent;
         return this;
     }
 
@@ -38,21 +38,21 @@ public class OptionBuilder<T> {
     }
 
     public OptionBuilder label(final String pLabel) {
-        label = requireNonNull(pLabel, "Label is null");
+        setLabel(pLabel);
         return this;
     }
 
     public OptionBuilder value(final String pValue) {
-        value = requireNonNull(pValue, "Value is null");
+        setValue(pValue);
         return this;
     }
 
     void setLabel(String pLabel) {
-        label = pLabel;
+        label = requireNonNull(pLabel, "Label is null");
     }
 
     void setValue(String pValue) {
-        value = pValue;
+        value = requireNonNull(pValue, "Value is null");
     }
 
     Option build() {
@@ -60,7 +60,9 @@ public class OptionBuilder<T> {
     }
 
     public ADBuilder<T> add() {
-        adBuilder.getOption().add(this);
-        return adBuilder;
+        requireNonNull(label, "Label is null");
+        requireNonNull(value, "Value is null");
+        parent.getOption().add(this);
+        return parent;
     }
 }

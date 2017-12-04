@@ -23,8 +23,8 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 public class ADBuilder<T> {
-    private OCDBuilder ocdBuilder;
-    private List<OptionBuilder> optionBuilders;
+    private OCDBuilder parent;
+    private List<OptionBuilder<T>> optionBuilders;
     private List<String> defaultValues;
     private String id;
     private Type type;
@@ -40,15 +40,15 @@ public class ADBuilder<T> {
     ADBuilder() {
     }
 
-    void initAfterUnmarshal(final OCDBuilder pOcdBuilder) {
-        ocdBuilder = pOcdBuilder;
+    void initAfterUnmarshal(final OCDBuilder pParent) {
+        setParent(pParent);
         if (optionBuilders != null) {
-            optionBuilders.forEach(optionBuilder -> optionBuilder.init(this));
+            optionBuilders.forEach(optionBuilder -> optionBuilder.setParent(this));
         }
     }
 
-    ADBuilder<T> init(final OCDBuilder pOCDBuilder) {
-        ocdBuilder = pOCDBuilder;
+    ADBuilder<T> setParent(final OCDBuilder pOCDBuilder) {
+        parent = pOCDBuilder;
         return this;
     }
 
@@ -100,7 +100,7 @@ public class ADBuilder<T> {
     }
 
     @XmlElement(name = "Option")
-    List<OptionBuilder> getOption() {
+    List<OptionBuilder<T>> getOption() {
         if (optionBuilders == null) {
             optionBuilders = new LinkedList<>();
         }
@@ -143,7 +143,7 @@ public class ADBuilder<T> {
     }
 
     public OptionBuilder<T> option() {
-        return new OptionBuilder<T>().init(this);
+        return new OptionBuilder<T>().setParent(this);
     }
 
     public ADBuilder<T> defaultValue(final T... pDefaultValue) {
@@ -206,7 +206,7 @@ public class ADBuilder<T> {
     }
 
     public OCDBuilder add() {
-        ocdBuilder.addAD(this);
-        return ocdBuilder;
+        parent.addAD(this);
+        return parent;
     }
 }
