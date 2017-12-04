@@ -21,7 +21,7 @@
     <AD id="getBooleans" type="Boolean" cardinality="5" required="false" name="Get booleans" description="Some booleans" default="true,true"/>
     <AD id="getShorts" type="Short" cardinality="5" required="false" name="Get shorts" description="Some shorts" min="1" max="10" default="1,2"/>
     <AD id="getPasswords" type="Password" cardinality="5" required="false" name="Get passwords" description="Some passwords" min="3" max="30"/>
-    <AD id="getTimeUnit" type="String" name="Get time unit" description="Some time unit" default="DAYS">
+    <AD id="getTimeUnit" type="String" name="Get time unit" required="true" description="Some time unit" default="DAYS">
         <Option label="NANOSECONDS" value="NANOSECONDS"/>
         <Option label="MICROSECONDS" value="MICROSECONDS"/>
         <Option label="MILLISECONDS" value="MILLISECONDS"/>
@@ -30,7 +30,7 @@
         <Option label="HOURS" value="HOURS"/>
         <Option label="DAYS" value="DAYS"/>
     </AD>
-    <AD id="getTimeUnits" type="String" cardinality="5" name="Get time units" description="Some time units" default="DAYS,HOURS">
+    <AD id="getTimeUnits" type="String" cardinality="5" name="Get time units" required="true" description="Some time units" default="DAYS,HOURS">
         <Option label="NANOSECONDS" value="NANOSECONDS"/>
         <Option label="MICROSECONDS" value="MICROSECONDS"/>
         <Option label="MILLISECONDS" value="MILLISECONDS"/>

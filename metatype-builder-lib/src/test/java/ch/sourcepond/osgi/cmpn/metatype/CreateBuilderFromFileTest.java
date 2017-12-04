@@ -36,8 +36,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.osgi.service.metatype.ObjectClassDefinition.ALL;
@@ -57,23 +59,23 @@ public class CreateBuilderFromFileTest {
         ocdBuilder.add();
     }
 
-    private AttributeDefinition findAttribute(final AttributeDefinition[] pAll, final String pId) {
+    private AD findAttribute(final AttributeDefinition[] pAll, final String pId) {
         for (int i = 0; i < pAll.length; i++) {
             if (pId.equals(pAll[i].getID())) {
-                return pAll[i];
+                return (AD) pAll[i];
             }
         }
         throw new AssertionError(format("No attribute found for id '%s'", pId));
     }
 
-    private AttributeDefinition assertBaseAttribute(final AttributeDefinition[] pAll,
-                                                    final String pId,
-                                                    final int pCardinality,
-                                                    final Type pType,
-                                                    final String pName,
-                                                    final String pDescription,
-                                                    final String[] pDefault) {
-        final AttributeDefinition ad = findAttribute(pAll, pId);
+    private AD assertBaseAttribute(final AttributeDefinition[] pAll,
+                                   final String pId,
+                                   final int pCardinality,
+                                   final Type pType,
+                                   final String pName,
+                                   final String pDescription,
+                                   final String[] pDefault) {
+        final AD ad = findAttribute(pAll, pId);
         assertEquals(pId, ad.getID());
         assertEquals(pType.getValue(), ad.getType());
         assertEquals(pName, ad.getName());
@@ -89,17 +91,42 @@ public class CreateBuilderFromFileTest {
     }
 
 
-    private void assertAttribute(final AttributeDefinition[] pAll,
-                                 final String pId,
-                                 final int pCardinality,
-                                 final Type pType,
-                                 final String pName,
-                                 final String pDescription,
-                                 final String[] pDefault) {
-        final AttributeDefinition ad = assertBaseAttribute(pAll, pId, pCardinality, pType, pName, pDescription, pDefault);
+    private AD assertAttribute(final AttributeDefinition[] pAll,
+                               final String pId,
+                               final int pCardinality,
+                               final Type pType,
+                               final String pName,
+                               final String pDescription,
+                               final String[] pDefault) {
+        final AD ad = assertBaseAttribute(pAll, pId, pCardinality, pType, pName, pDescription, pDefault);
         assertNull(ad.getOptionLabels());
         assertNull(ad.getOptionValues());
+        return ad;
     }
+
+    private void assertRequiredAttribute(final AttributeDefinition[] pAll,
+                                         final String pId,
+                                         final int pCardinality,
+                                         final Type pType,
+                                         final String pName,
+                                         final String pDescription,
+                                         final String[] pDefault) {
+        final AD ad = assertAttribute(pAll, pId, pCardinality, pType, pName, pDescription, pDefault);
+        assertTrue(ad.isRequired());
+    }
+
+
+    private void assertOptionalAttribute(final AttributeDefinition[] pAll,
+                                         final String pId,
+                                         final int pCardinality,
+                                         final Type pType,
+                                         final String pName,
+                                         final String pDescription,
+                                         final String[] pDefault) {
+        final AD ad = assertAttribute(pAll, pId, pCardinality, pType, pName, pDescription, pDefault);
+        assertFalse(ad.isRequired());
+    }
+
 
     private void assertOptionAttribute(final AttributeDefinition[] pAll,
                                        final String pId,
@@ -110,7 +137,8 @@ public class CreateBuilderFromFileTest {
                                        final String[] pOptionLabel,
                                        final String[] pOptionValue,
                                        final String[] pDefault) {
-        final AttributeDefinition ad = assertBaseAttribute(pAll, pId, pCardinality, pType, pName, pDescription, pDefault);
+        final AD ad = assertBaseAttribute(pAll, pId, pCardinality, pType, pName, pDescription, pDefault);
+        assertTrue(ad.isRequired());
         assertArrayEquals(pOptionLabel, ad.getOptionLabels());
         assertArrayEquals(pOptionValue, ad.getOptionValues());
     }
@@ -137,27 +165,27 @@ public class CreateBuilderFromFileTest {
         final AttributeDefinition[] attrs = ocd.getAttributeDefinitions(ALL);
         assertEquals(22, attrs.length);
 
-        assertAttribute(attrs, "getString", 0, Type.String, "Get string", "Some string", new String[]{"one"});
-        assertAttribute(attrs, "getLong", 0, Type.Long, "Get long", "Some long", new String[]{"1"});
-        assertAttribute(attrs, "getDouble", 0, Type.Double, "Get double", "Some double", new String[]{"1"});
-        assertAttribute(attrs, "getFloat", 0, Type.Float, "Get float", "Some float", new String[]{"1"});
-        assertAttribute(attrs, "getInteger", 0, Type.Integer, "Get integer", "Some integer", new String[]{"1"});
-        assertAttribute(attrs, "getByte", 0, Type.Byte, "Get byte", "Some byte", new String[]{"1"});
-        assertAttribute(attrs, "getCharacter", 0, Type.Char, "Get character", "Some character", new String[]{"a"});
-        assertAttribute(attrs, "getBoolean", 0, Type.Boolean, "Get boolean", "Some boolean", new String[]{"true"});
-        assertAttribute(attrs, "getShort", 0, Type.Short, "Get short", "Some short", new String[]{"1"});
-        assertAttribute(attrs, "getPassword", 0, Type.Password, "Get password", "Some password", null);
+        assertRequiredAttribute(attrs, "getString", 0, Type.String, "Get string", "Some string", new String[]{"one"});
+        assertRequiredAttribute(attrs, "getLong", 0, Type.Long, "Get long", "Some long", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getDouble", 0, Type.Double, "Get double", "Some double", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getFloat", 0, Type.Float, "Get float", "Some float", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getInteger", 0, Type.Integer, "Get integer", "Some integer", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getByte", 0, Type.Byte, "Get byte", "Some byte", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getCharacter", 0, Type.Char, "Get character", "Some character", new String[]{"a"});
+        assertRequiredAttribute(attrs, "getBoolean", 0, Type.Boolean, "Get boolean", "Some boolean", new String[]{"true"});
+        assertRequiredAttribute(attrs, "getShort", 0, Type.Short, "Get short", "Some short", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getPassword", 0, Type.Password, "Get password", "Some password", null);
 
-        assertAttribute(attrs, "getStrings", 5, Type.String, "Get strings", "Some strings", new String[]{"one", "two"});
-        assertAttribute(attrs, "getLongs", 5, Type.Long, "Get longs", "Some longs", new String[]{"1", "2"});
-        assertAttribute(attrs, "getDoubles", 5, Type.Double, "Get doubles", "Some doubles", new String[]{"1", "2"});
-        assertAttribute(attrs, "getFloats", 5, Type.Float, "Get floats", "Some floats", new String[]{"1", "2"});
-        assertAttribute(attrs, "getIntegers", 5, Type.Integer, "Get integers", "Some integers", new String[]{"1", "2"});
-        assertAttribute(attrs, "getBytes", 5, Type.Byte, "Get bytes", "Some bytes", new String[]{"1", "2"});
-        assertAttribute(attrs, "getCharacters", 5, Type.Char, "Get characters", "Some characters", new String[]{"a", "b"});
-        assertAttribute(attrs, "getBooleans", 5, Type.Boolean, "Get booleans", "Some booleans", new String[]{"true", "true"});
-        assertAttribute(attrs, "getShorts", 5, Type.Short, "Get shorts", "Some shorts", new String[]{"1", "2"});
-        assertAttribute(attrs, "getPasswords", 5, Type.Password, "Get passwords", "Some passwords", null);
+        assertOptionalAttribute(attrs, "getStrings", 5, Type.String, "Get strings", "Some strings", new String[]{"one", "two"});
+        assertOptionalAttribute(attrs, "getLongs", 5, Type.Long, "Get longs", "Some longs", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getDoubles", 5, Type.Double, "Get doubles", "Some doubles", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getFloats", 5, Type.Float, "Get floats", "Some floats", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getIntegers", 5, Type.Integer, "Get integers", "Some integers", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getBytes", 5, Type.Byte, "Get bytes", "Some bytes", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getCharacters", 5, Type.Char, "Get characters", "Some characters", new String[]{"a", "b"});
+        assertOptionalAttribute(attrs, "getBooleans", 5, Type.Boolean, "Get booleans", "Some booleans", new String[]{"true", "true"});
+        assertOptionalAttribute(attrs, "getShorts", 5, Type.Short, "Get shorts", "Some shorts", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getPasswords", 5, Type.Password, "Get passwords", "Some passwords", null);
 
         assertOptionAttribute(attrs, "getTimeUnit", 0, Type.String, "Get time unit", "Some time unit",
                 new String[]{NANOSECONDS.name(), MICROSECONDS.name(), MILLISECONDS.name(), SECONDS.name(), MINUTES.name(), HOURS.name(), DAYS.name()},

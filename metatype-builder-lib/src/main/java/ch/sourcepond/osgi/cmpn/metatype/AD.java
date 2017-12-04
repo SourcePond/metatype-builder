@@ -22,8 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 final class AD implements AttributeDefinition, Localizable<AD> {
     private final String id;
-    private final int type;
-    private final Function<String, ?> converter;
+    private final Type type;
     private final int cardinality;
     private final String name;
     private final String description;
@@ -34,8 +33,7 @@ final class AD implements AttributeDefinition, Localizable<AD> {
     private final boolean required;
 
     public AD(final String pId,
-              final int pType,
-              final Function<String, ?> pConverter,
+              final Type pType,
               final int pCardinality,
               final String pName,
               final String pDescription,
@@ -46,7 +44,6 @@ final class AD implements AttributeDefinition, Localizable<AD> {
               final boolean pRequired) {
         id = pId;
         type = pType;
-        converter = pConverter;
         cardinality = pCardinality;
         name = pName;
         description = pDescription;
@@ -61,7 +58,6 @@ final class AD implements AttributeDefinition, Localizable<AD> {
     public AD localize(final Localization pLocalization) {
         return new AD(id,
                 type,
-                converter,
                 cardinality,
                 pLocalization.localize(name),
                 pLocalization.localize(description),
@@ -94,7 +90,7 @@ final class AD implements AttributeDefinition, Localizable<AD> {
 
     @Override
     public int getType() {
-        return type;
+        return type.getValue();
     }
 
     private String[] getOptionEntries(final Function<Option, String> pConverter) {
@@ -133,7 +129,7 @@ final class AD implements AttributeDefinition, Localizable<AD> {
     public String validate(final String value) {
         try {
             // TODO: Apply min/max here
-            converter.apply(value);
+            type.getConverter().apply(value);
         } catch (final Exception e) {
             return e.getLocalizedMessage();
         }

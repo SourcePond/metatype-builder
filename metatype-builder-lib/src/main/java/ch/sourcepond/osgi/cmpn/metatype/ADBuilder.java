@@ -40,16 +40,16 @@ public class ADBuilder<T> {
     ADBuilder() {
     }
 
+    ADBuilder<T> setParent(final OCDBuilder pOCDBuilder) {
+        parent = pOCDBuilder;
+        return this;
+    }
+
     void initAfterUnmarshal(final OCDBuilder pParent) {
         setParent(pParent);
         if (optionBuilders != null) {
             optionBuilders.forEach(optionBuilder -> optionBuilder.setParent(this));
         }
-    }
-
-    ADBuilder<T> setParent(final OCDBuilder pOCDBuilder) {
-        parent = pOCDBuilder;
-        return this;
     }
 
     @XmlAttribute(required = true)
@@ -192,9 +192,8 @@ public class ADBuilder<T> {
 
     AD build() {
         return new AD(
-                requireNonNull(id, "ID has not been set"),
-                requireNonNull(type, "Type has not been set").getValue(),
-                type.getConverter(),
+                id,
+                type,
                 cardinality,
                 name,
                 description,
@@ -206,6 +205,8 @@ public class ADBuilder<T> {
     }
 
     public OCDBuilder add() {
+        requireNonNull(id, "ID has not been set");
+        requireNonNull(type, "Type has not been set");
         parent.addAD(this);
         return parent;
     }

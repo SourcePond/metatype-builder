@@ -13,12 +13,75 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ADBuilderTest {
+    private static final String EXPECTED_ID = "someId";
+    private static final Type EXPECTED_TYPE = Type.String;
+    private static final int EXPECTED_CARDINALITY = -34;
+    private static final String EXPECTED_NAME = "someName";
+    private static final String EXPECTED_DESCRIPTION = "someDescription";
+    private static final String EXPECTED_MAX = "someMax";
+    private static final String EXPECTED_MIN = "someMin";
     private final OCDBuilder parent = mock(OCDBuilder.class);
+    private final ADBuilder<String> builder = new ADBuilder<>();
 
+    @Test
     public void initAfterUnmarshal() {
+        final OptionBuilder<String> optionBuilder = mock(OptionBuilder.class);
+        builder.getOption().add(optionBuilder);
+        builder.initAfterUnmarshal(parent);
+        assertSame(parent, builder.id(EXPECTED_ID).type(EXPECTED_TYPE).add());
+        verify(optionBuilder).setParent(builder);
+    }
 
+    @Test(expected = NullPointerException.class)
+    public void addIdNotSet() {
+        builder.setParent(parent).type(EXPECTED_TYPE).add();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void addTypeNotSet() {
+        builder.setParent(parent).id(EXPECTED_ID).add();
+    }
+
+    @Test
+    public void id() {
+        assertEquals(EXPECTED_ID, builder.id(EXPECTED_ID).getId());
+    }
+
+    @Test
+    public void type() {
+        assertEquals(EXPECTED_TYPE, builder.type(Type.String).getType());
+    }
+
+    @Test
+    public void cardinality() {
+        assertEquals(EXPECTED_CARDINALITY, builder.cardinality(EXPECTED_CARDINALITY).getCardinality());
+    }
+
+    @Test
+    public void name() {
+        assertEquals(EXPECTED_NAME, builder.name(EXPECTED_NAME).getName());
+    }
+
+    @Test
+    public void description() {
+        assertEquals(EXPECTED_DESCRIPTION, builder.description(EXPECTED_DESCRIPTION).getDescription());
+    }
+
+    @Test
+    public void max() {
+        assertEquals(EXPECTED_MAX, builder.max(EXPECTED_MAX).getMax());
+    }
+
+    @Test
+    public void min() {
+        assertEquals(EXPECTED_MIN, builder.min(EXPECTED_MIN).getMin());
     }
 }
