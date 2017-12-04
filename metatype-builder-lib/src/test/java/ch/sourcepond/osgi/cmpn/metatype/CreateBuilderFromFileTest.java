@@ -165,33 +165,33 @@ public class CreateBuilderFromFileTest {
         final AttributeDefinition[] attrs = ocd.getAttributeDefinitions(ALL);
         assertEquals(22, attrs.length);
 
-        assertRequiredAttribute(attrs, "getString", 0, Type.String, "Get string", "Some string", new String[]{"one"});
-        assertRequiredAttribute(attrs, "getLong", 0, Type.Long, "Get long", "Some long", new String[]{"1"});
-        assertRequiredAttribute(attrs, "getDouble", 0, Type.Double, "Get double", "Some double", new String[]{"1"});
-        assertRequiredAttribute(attrs, "getFloat", 0, Type.Float, "Get float", "Some float", new String[]{"1"});
-        assertRequiredAttribute(attrs, "getInteger", 0, Type.Integer, "Get integer", "Some integer", new String[]{"1"});
-        assertRequiredAttribute(attrs, "getByte", 0, Type.Byte, "Get byte", "Some byte", new String[]{"1"});
-        assertRequiredAttribute(attrs, "getCharacter", 0, Type.Char, "Get character", "Some character", new String[]{"a"});
-        assertRequiredAttribute(attrs, "getBoolean", 0, Type.Boolean, "Get boolean", "Some boolean", new String[]{"true"});
-        assertRequiredAttribute(attrs, "getShort", 0, Type.Short, "Get short", "Some short", new String[]{"1"});
-        assertRequiredAttribute(attrs, "getPassword", 0, Type.Password, "Get password", "Some password", null);
+        assertRequiredAttribute(attrs, "getString", 0, Type.STRING, "Get string", "Some string", new String[]{"one"});
+        assertRequiredAttribute(attrs, "getLong", 0, Type.LONG, "Get long", "Some long", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getDouble", 0, Type.DOUBLE, "Get double", "Some double", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getFloat", 0, Type.FLOAT, "Get float", "Some float", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getInteger", 0, Type.INTEGER, "Get integer", "Some integer", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getByte", 0, Type.BYTE, "Get byte", "Some byte", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getCharacter", 0, Type.CHARACTER, "Get character", "Some character", new String[]{"a"});
+        assertRequiredAttribute(attrs, "getBoolean", 0, Type.BOOLEAN, "Get boolean", "Some boolean", new String[]{"true"});
+        assertRequiredAttribute(attrs, "getShort", 0, Type.SHORT, "Get short", "Some short", new String[]{"1"});
+        assertRequiredAttribute(attrs, "getPassword", 0, Type.PASSWORD, "Get password", "Some password", null);
 
-        assertOptionalAttribute(attrs, "getStrings", 5, Type.String, "Get strings", "Some strings", new String[]{"one", "two"});
-        assertOptionalAttribute(attrs, "getLongs", 5, Type.Long, "Get longs", "Some longs", new String[]{"1", "2"});
-        assertOptionalAttribute(attrs, "getDoubles", 5, Type.Double, "Get doubles", "Some doubles", new String[]{"1", "2"});
-        assertOptionalAttribute(attrs, "getFloats", 5, Type.Float, "Get floats", "Some floats", new String[]{"1", "2"});
-        assertOptionalAttribute(attrs, "getIntegers", 5, Type.Integer, "Get integers", "Some integers", new String[]{"1", "2"});
-        assertOptionalAttribute(attrs, "getBytes", 5, Type.Byte, "Get bytes", "Some bytes", new String[]{"1", "2"});
-        assertOptionalAttribute(attrs, "getCharacters", 5, Type.Char, "Get characters", "Some characters", new String[]{"a", "b"});
-        assertOptionalAttribute(attrs, "getBooleans", 5, Type.Boolean, "Get booleans", "Some booleans", new String[]{"true", "true"});
-        assertOptionalAttribute(attrs, "getShorts", 5, Type.Short, "Get shorts", "Some shorts", new String[]{"1", "2"});
-        assertOptionalAttribute(attrs, "getPasswords", 5, Type.Password, "Get passwords", "Some passwords", null);
+        assertOptionalAttribute(attrs, "getStrings", 5, Type.STRING, "Get strings", "Some strings", new String[]{"one", "two"});
+        assertOptionalAttribute(attrs, "getLongs", 5, Type.LONG, "Get longs", "Some longs", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getDoubles", 5, Type.DOUBLE, "Get doubles", "Some doubles", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getFloats", 5, Type.FLOAT, "Get floats", "Some floats", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getIntegers", 5, Type.INTEGER, "Get integers", "Some integers", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getBytes", 5, Type.BYTE, "Get bytes", "Some bytes", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getCharacters", 5, Type.CHARACTER, "Get characters", "Some characters", new String[]{"a", "b"});
+        assertOptionalAttribute(attrs, "getBooleans", 5, Type.BOOLEAN, "Get booleans", "Some booleans", new String[]{"true", "true"});
+        assertOptionalAttribute(attrs, "getShorts", 5, Type.SHORT, "Get shorts", "Some shorts", new String[]{"1", "2"});
+        assertOptionalAttribute(attrs, "getPasswords", 5, Type.PASSWORD, "Get passwords", "Some passwords", null);
 
-        assertOptionAttribute(attrs, "getTimeUnit", 0, Type.String, "Get time unit", "Some time unit",
+        assertOptionAttribute(attrs, "getTimeUnit", 0, Type.STRING, "Get time unit", "Some time unit",
                 new String[]{NANOSECONDS.name(), MICROSECONDS.name(), MILLISECONDS.name(), SECONDS.name(), MINUTES.name(), HOURS.name(), DAYS.name()},
                 new String[]{NANOSECONDS.name(), MICROSECONDS.name(), MILLISECONDS.name(), SECONDS.name(), MINUTES.name(), HOURS.name(), DAYS.name()},
                 new String[]{DAYS.name()});
-        assertOptionAttribute(attrs, "getTimeUnits", 5, Type.String, "Get time units", "Some time units",
+        assertOptionAttribute(attrs, "getTimeUnits", 5, Type.STRING, "Get time units", "Some time units",
                 new String[]{NANOSECONDS.name(), MICROSECONDS.name(), MILLISECONDS.name(), SECONDS.name(), MINUTES.name(), HOURS.name(), DAYS.name()},
                 new String[]{NANOSECONDS.name(), MICROSECONDS.name(), MILLISECONDS.name(), SECONDS.name(), MINUTES.name(), HOURS.name(), DAYS.name()},
                 new String[]{DAYS.name(), HOURS.name()});

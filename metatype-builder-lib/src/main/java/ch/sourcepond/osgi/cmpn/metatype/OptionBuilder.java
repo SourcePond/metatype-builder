@@ -17,12 +17,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import static java.util.Objects.requireNonNull;
 
-public class OptionBuilder<T> {
-    private ADBuilder<T> parent;
+public class OptionBuilder<T, U> {
+    private ADBuilder<T, U> parent;
     private String label;
     private String value;
 
-    OptionBuilder<T> setParent(final ADBuilder<T> pParent) {
+    OptionBuilder<T, U> setParent(final ADBuilder<T, U> pParent) {
         parent = pParent;
         return this;
     }
@@ -59,7 +59,7 @@ public class OptionBuilder<T> {
         return new Option(label, value);
     }
 
-    public ADBuilder<T> add() {
+    public ADBuilder<T, U> add() {
         requireNonNull(label, "Label is null");
         requireNonNull(value, "Value is null");
         parent.getOption().add(this);

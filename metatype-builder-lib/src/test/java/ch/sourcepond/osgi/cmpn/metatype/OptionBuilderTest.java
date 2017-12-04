@@ -27,9 +27,9 @@ import static org.mockito.Mockito.when;
 public class OptionBuilderTest {
     private static final String EXPECTED_LABEL = "someLabel";
     private static final String EXPECTED_VALUE = "someValue";
-    private final List<OptionBuilder<String>> options = mock(List.class);
-    private final ADBuilder<String> parent = mock(ADBuilder.class);
-    private final OptionBuilder<String> builder = new OptionBuilder<>();
+    private final List<OptionBuilder<String, Integer>> options = mock(List.class);
+    private final ADBuilder<String, Integer> parent = mock(ADBuilder.class);
+    private final OptionBuilder<String, Integer> builder = new OptionBuilder<>();
 
     @Before
     public void setup() {

@@ -18,16 +18,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-public class ADBuilder<T> {
+public class ADBuilder<T, U> {
     private OCDBuilder parent;
-    private List<OptionBuilder<T>> optionBuilders;
+    private List<OptionBuilder<T, U>> optionBuilders;
     private List<String> defaultValues;
     private String id;
-    private Type type;
+    private Type<T, U> type;
     private int cardinality;
     private String name;
     private String description;
@@ -40,7 +41,7 @@ public class ADBuilder<T> {
     ADBuilder() {
     }
 
-    ADBuilder<T> setParent(final OCDBuilder pOCDBuilder) {
+    ADBuilder<T, U> setParent(final OCDBuilder pOCDBuilder) {
         parent = pOCDBuilder;
         return this;
     }
@@ -59,7 +60,7 @@ public class ADBuilder<T> {
 
     @XmlJavaTypeAdapter(TypeAdapter.class)
     @XmlAttribute(required = true)
-    Type getType() {
+    Type<T, U> getType() {
         return type;
     }
 
@@ -100,53 +101,53 @@ public class ADBuilder<T> {
     }
 
     @XmlElement(name = "Option")
-    List<OptionBuilder<T>> getOption() {
+    List<OptionBuilder<T, U>> getOption() {
         if (optionBuilders == null) {
             optionBuilders = new LinkedList<>();
         }
         return optionBuilders;
     }
 
-    ADBuilder<T> id(final String pId) {
+    ADBuilder<T, U> id(final String pId) {
         id = pId;
         return this;
     }
 
-    public ADBuilder<T> max(final T pMax) {
+    public ADBuilder<T, U> max(final T pMax) {
         max = pMax.toString();
         return this;
     }
 
-    public ADBuilder<T> min(final T pMin) {
+    public ADBuilder<T, U> min(final T pMin) {
         min = pMin.toString();
         return this;
     }
 
-    public ADBuilder<T> cardinality(final int pCardinality) {
+    public ADBuilder<T, U> cardinality(final int pCardinality) {
         cardinality = pCardinality;
         return this;
     }
 
-    public ADBuilder<T> name(final String pName) {
+    public ADBuilder<T, U> name(final String pName) {
         name = pName;
         return this;
     }
 
-    public ADBuilder<T> description(final String pDescription) {
+    public ADBuilder<T, U> description(final String pDescription) {
         description = pDescription;
         return this;
     }
 
-    ADBuilder<T> type(final Type pType) {
+    ADBuilder<T, U> type(final Type<T, U> pType) {
         type = pType;
         return this;
     }
 
-    public OptionBuilder<T> option() {
-        return new OptionBuilder<T>().setParent(this);
+    public OptionBuilder<T, U> option() {
+        return new OptionBuilder<T, U>().setParent(this);
     }
 
-    public ADBuilder<T> defaultValue(final T... pDefaultValue) {
+    public ADBuilder<T, U> defaultValue(final T... pDefaultValue) {
         final List<String> defaultValues = getDefault();
         for (int i = 0; i < pDefaultValue.length; i++) {
             defaultValues.add(pDefaultValue[i].toString());
@@ -158,7 +159,7 @@ public class ADBuilder<T> {
         id = pId;
     }
 
-    void setType(final Type pType) {
+    void setType(final Type<T, U> pType) {
         type = pType;
     }
 
@@ -190,8 +191,9 @@ public class ADBuilder<T> {
         defaultValues = pDefaultValues;
     }
 
-    AD build() {
-        return new AD(
+    AD<T, U> build() {
+        final Function<String, U> validationConverter = type.getValidationConverter();
+        return new AD<T, U>(
                 id,
                 type,
                 cardinality,
@@ -199,8 +201,8 @@ public class ADBuilder<T> {
                 description,
                 optionBuilders == null ? null : optionBuilders.stream().map(builder -> builder.build()).collect(toList()),
                 defaultValues,
-                min,
-                max,
+                min == null ? null : validationConverter.apply(min),
+                max == null ? null : validationConverter.apply(max),
                 required);
     }
 

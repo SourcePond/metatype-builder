@@ -18,15 +18,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import static java.util.Objects.requireNonNull;
 
 public class IconBuilder {
-    private OCDBuilder ocdBuilder;
+    private OCDBuilder parent;
     private String resource;
     private int size;
 
     IconBuilder() {
     }
 
-    IconBuilder init(final OCDBuilder pOcdBuilder) {
-        ocdBuilder = pOcdBuilder;
+    IconBuilder setParent(final OCDBuilder pParent) {
+        parent = pParent;
         return this;
     }
 
@@ -63,7 +63,7 @@ public class IconBuilder {
     }
 
     public OCDBuilder add() {
-        ocdBuilder.getIcon().add(this);
-        return ocdBuilder;
+        parent.getIcon().add(this);
+        return parent;
     }
 }

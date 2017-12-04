@@ -13,17 +13,22 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+class Validators {
 
-class TypeAdapter extends XmlAdapter<String, Type<?, ?>> {
-
-    @Override
-    public Type unmarshal(final String v) throws Exception {
-        return Type.valueOf(v);
+    public static String validateMinLength(final String pValue, final Integer pMinLength) {
+        return "";
     }
 
-    @Override
-    public String marshal(final Type<?, ?> v) throws Exception {
-        return v.getName();
+    public static String validateMaxLength(final String pValue, final Integer pMaxLength) {
+
+        return "";
+    }
+
+    public static <T> String validateMin(final T pValue, final T pMin) {
+        return "";
+    }
+
+    public static <T> String validateMax(final T pValue, final T pMax) {
+        return "";
     }
 }

@@ -20,27 +20,27 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
-final class AD implements AttributeDefinition, Localizable<AD> {
+final class AD<T, U> implements AttributeDefinition, Localizable<AD<T, U>> {
     private final String id;
-    private final Type type;
+    private final Type<T, U> type;
     private final int cardinality;
     private final String name;
     private final String description;
     private final List<Option> options;
     private final List<String> defaultValue;
-    private final String min;
-    private final String max;
+    private final U min;
+    private final U max;
     private final boolean required;
 
     public AD(final String pId,
-              final Type pType,
+              final Type<T, U> pType,
               final int pCardinality,
               final String pName,
               final String pDescription,
               final List<Option> pOptions,
               final List<String> pDefaultValue,
-              final String pMin,
-              final String pMax,
+              final U pMin,
+              final U pMax,
               final boolean pRequired) {
         id = pId;
         type = pType;
@@ -128,8 +128,9 @@ final class AD implements AttributeDefinition, Localizable<AD> {
     @Override
     public String validate(final String value) {
         try {
-            // TODO: Apply min/max here
-            type.getConverter().apply(value);
+            final T convertedValue = type.getValueConverter().apply(value);
+            type.getMinValidator().apply(convertedValue, min);
+            type.getMaxValidator().apply(convertedValue, max);
         } catch (final Exception e) {
             return e.getLocalizedMessage();
         }

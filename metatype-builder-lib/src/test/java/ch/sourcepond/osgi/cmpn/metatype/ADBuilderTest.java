@@ -22,18 +22,18 @@ import static org.mockito.Mockito.verify;
 
 public class ADBuilderTest {
     private static final String EXPECTED_ID = "someId";
-    private static final Type EXPECTED_TYPE = Type.String;
+    private static final Type<String, Integer> EXPECTED_TYPE = Type.STRING;
     private static final int EXPECTED_CARDINALITY = -34;
     private static final String EXPECTED_NAME = "someName";
     private static final String EXPECTED_DESCRIPTION = "someDescription";
     private static final String EXPECTED_MAX = "someMax";
     private static final String EXPECTED_MIN = "someMin";
     private final OCDBuilder parent = mock(OCDBuilder.class);
-    private final ADBuilder<String> builder = new ADBuilder<>();
+    private final ADBuilder<String, Integer> builder = new ADBuilder<>();
 
     @Test
     public void initAfterUnmarshal() {
-        final OptionBuilder<String> optionBuilder = mock(OptionBuilder.class);
+        final OptionBuilder<String, Integer> optionBuilder = mock(OptionBuilder.class);
         builder.getOption().add(optionBuilder);
         builder.initAfterUnmarshal(parent);
         assertSame(parent, builder.id(EXPECTED_ID).type(EXPECTED_TYPE).add());
@@ -57,7 +57,7 @@ public class ADBuilderTest {
 
     @Test
     public void type() {
-        assertEquals(EXPECTED_TYPE, builder.type(Type.String).getType());
+        assertEquals(EXPECTED_TYPE, builder.type(Type.STRING).getType());
     }
 
     @Test

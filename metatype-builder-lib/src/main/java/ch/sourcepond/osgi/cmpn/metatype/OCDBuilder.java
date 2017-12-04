@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toList;
 
 public class OCDBuilder {
     private MTPBuilder mtpBuilder;
-    private List<ADBuilder<?>> adBuilders;
+    private List<ADBuilder<?, ?>> adBuilders;
     private List<IconBuilder> iconBuilders;
     private String name;
     private String id;
@@ -48,51 +48,51 @@ public class OCDBuilder {
         return pValue;
     }
 
-    public ADBuilder<Boolean> booleanAD(final String pId) {
-        return new ADBuilder<Boolean>().setParent(this).id(pId).type(Type.Boolean);
+    public ADBuilder<Boolean, Boolean> booleanAD(final String pId) {
+        return new ADBuilder<Boolean, Boolean>().setParent(this).id(pId).type(Type.BOOLEAN);
     }
 
-    public ADBuilder<Byte> byteAD(final String pId) {
-        return new ADBuilder<Byte>().setParent(this).id(pId).type(Type.Byte);
+    public ADBuilder<Byte, Byte> byteAD(final String pId) {
+        return new ADBuilder<Byte, Byte>().setParent(this).id(pId).type(Type.BYTE);
     }
 
-    public ADBuilder<Character> charAD(final String pId) {
-        return new ADBuilder<Character>().setParent(this).id(pId).type(Type.Char);
+    public ADBuilder<Character, Character> charAD(final String pId) {
+        return new ADBuilder<Character, Character>().setParent(this).id(pId).type(Type.CHARACTER);
     }
 
-    public ADBuilder<Double> doubleAD(final String pId) {
-        return new ADBuilder<Double>().setParent(this).id(pId).type(Type.Double);
+    public ADBuilder<Double, Double> doubleAD(final String pId) {
+        return new ADBuilder<Double, Double>().setParent(this).id(pId).type(Type.DOUBLE);
     }
 
-    public ADBuilder<Float> floatAD(final String pId) {
-        return new ADBuilder<Float>().setParent(this).id(pId).type(Type.Float);
+    public ADBuilder<Float, Float> floatAD(final String pId) {
+        return new ADBuilder<Float, Float>().setParent(this).id(pId).type(Type.FLOAT);
     }
 
-    public ADBuilder<Integer> intAD(final String pId) {
-        return new ADBuilder<Integer>().setParent(this).id(pId).type(Type.Integer);
+    public ADBuilder<Integer, Integer> intAD(final String pId) {
+        return new ADBuilder<Integer, Integer>().setParent(this).id(pId).type(Type.INTEGER);
     }
 
-    public ADBuilder<Long> longAD(final String pId) {
-        return new ADBuilder<Long>().setParent(this).id(pId).type(Type.Long);
+    public ADBuilder<Long, Long> longAD(final String pId) {
+        return new ADBuilder<Long, Long>().setParent(this).id(pId).type(Type.LONG);
     }
 
-    public ADBuilder<String> passwordAD(final String pId) {
-        return new ADBuilder<String>().setParent(this).id(pId).type(Type.Password);
+    public ADBuilder<String, Integer> passwordAD(final String pId) {
+        return new ADBuilder<String, Integer>().setParent(this).id(pId).type(Type.PASSWORD);
     }
 
-    public ADBuilder<String> stringAD(final String pId) {
-        return new ADBuilder<String>().setParent(this).id(pId).type(Type.String);
+    public ADBuilder<String, Integer> stringAD(final String pId) {
+        return new ADBuilder<String, Integer>().setParent(this).id(pId).type(Type.STRING);
     }
 
-    public <T extends Enum<T>> ADBuilder<String> optionsAD(final String pId, final Class<T> pEnumType) {
-        final ADBuilder<String> builder = new ADBuilder<String>().setParent(this).id(pId).type(Type.String);
+    public <T extends Enum<T>> ADBuilder<String, Integer> optionsAD(final String pId, final Class<T> pEnumType) {
+        final ADBuilder<String, Integer> builder = new ADBuilder<String, Integer>().setParent(this).id(pId).type(Type.STRING);
         for (final T e : pEnumType.getEnumConstants()) {
             builder.option().label(e.name()).value(e.name()).add();
         }
         return builder;
     }
 
-    void addAD(final ADBuilder<?> pAd) {
+    void addAD(final ADBuilder<?, ?> pAd) {
         getAD().add(pAd);
     }
 
@@ -102,11 +102,11 @@ public class OCDBuilder {
     }
 
     public IconBuilder icon() {
-        return new IconBuilder().init(this);
+        return new IconBuilder().setParent(this);
     }
 
     @XmlElement(name = "AD")
-    List<ADBuilder<?>> getAD() {
+    List<ADBuilder<?, ?>> getAD() {
         if (adBuilders == null) {
             adBuilders = new LinkedList<>();
         }
@@ -149,7 +149,10 @@ public class OCDBuilder {
     }
 
     OCD build() {
-        return new OCD(id, iconBuilders == null ? emptyList() : iconBuilders.stream().map(i -> i.init(this).build()).collect(toList()), adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.setParent(this).build()).collect(toList()), name,
+        return new OCD(id, iconBuilders == null ? emptyList() :
+                iconBuilders.stream().map(i -> i.setParent(this).build()).collect(toList()),
+                adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.setParent(this).build()).collect(toList()),
+                name,
                 description
         );
     }
