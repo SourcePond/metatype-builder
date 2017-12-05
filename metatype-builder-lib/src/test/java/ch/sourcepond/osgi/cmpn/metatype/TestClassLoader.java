@@ -22,6 +22,7 @@ import java.io.IOException;
 import static java.lang.String.format;
 
 public class TestClassLoader extends ClassLoader implements BundleReference {
+    private volatile boolean initialized;
     private final Bundle bundle;
 
     public TestClassLoader(final Bundle pBundle) {
@@ -35,13 +36,14 @@ public class TestClassLoader extends ClassLoader implements BundleReference {
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (TestConfigurationAsAnnotation.class.getName().equals(name)) {
+        if (TestConfigurationAsAnnotation.class.getName().equals(name) && !initialized) {
             final byte[] data;
             try {
                 data = IOUtils.toByteArray(TestConfigurationAsAnnotation.class.getResource(format("/%s.class", name.replace('.', '/'))));
             } catch (IOException e) {
                 throw new ClassNotFoundException(e.getMessage(), e);
             }
+            initialized = true;
             return defineClass(name, data, 0, data.length);
         }
         return super.loadClass(name, resolve);
