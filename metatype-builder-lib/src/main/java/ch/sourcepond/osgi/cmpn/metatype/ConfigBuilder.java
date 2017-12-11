@@ -13,6 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
+
+import org.osgi.service.cm.ConfigurationException;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Dictionary;
@@ -20,7 +23,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.String.format;
 import static java.lang.reflect.Proxy.newProxyInstance;
 import static java.util.Objects.requireNonNull;
 
@@ -35,7 +37,7 @@ public class ConfigBuilder<T extends Annotation> {
         ad = pAd;
     }
 
-    private T toConfig() {
+    private T toConfig() throws ConfigurationException {
         final Map<String, Object> map = new HashMap<>();
         final Enumeration<String> keys = config.keys();
         while (keys.hasMoreElements()) {
@@ -43,31 +45,38 @@ public class ConfigBuilder<T extends Annotation> {
             final Object value = config.get(key);
 
             if (!ad.containsKey(key)) {
-                throw new IllegalArgumentException(format("Unknown property found: key=%s, value=%s", key, value));
+                throw new ConfigurationException(key, "Unsupported property!");
             }
 
             map.put(key, config.get(key));
         }
+
+        for (final Method m : configAnnotation.getDeclaredMethods()) {
+            if (!map.containsKey(m.getName())) {
+                map.put(m.getName(), m.getDefaultValue());
+            }
+        }
+
         return (T) newProxyInstance(configAnnotation.getClassLoader(), new Class<?>[]{configAnnotation},
                 (proxy, method, args) -> map.get(method.getName()));
     }
 
-    private T validate(T pUnvalidatedConfig) {
+    private T validate(T pUnvalidatedConfig) throws ConfigurationException {
         for (final Method m : configAnnotation.getDeclaredMethods()) {
             try {
                 final Object value = m.invoke(pUnvalidatedConfig);
                 final ADBuilder<?, ?> builder = ad.get(m.getName());
                 if (value == null && builder.isRequired()) {
-                    throw new IllegalArgumentException(format("Property %s is required!", m.getName()));
+                    throw new ConfigurationException(m.getName(), "Property is required!");
                 }
             } catch (final Exception e) {
-                throw new IllegalArgumentException(format("Property %s could not be retrieved!", m.getName()), e);
+                throw new ConfigurationException(m.getName(), "Property could not be retrieved!", e);
             }
         }
         return pUnvalidatedConfig;
     }
 
-    public T build() {
+    public T build() throws ConfigurationException {
         return validate(toConfig());
     }
 }

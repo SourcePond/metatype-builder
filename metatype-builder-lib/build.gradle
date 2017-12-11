@@ -2,9 +2,9 @@ group 'ch.sourcepond.osgi.cmpn'
 version '0.1-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'osgi'
 apply plugin: 'maven'
 apply plugin: 'idea'
+apply plugin: 'biz.aQute.bnd.builder'
 
 sourceCompatibility = 1.8
 
@@ -25,5 +25,12 @@ dependencies {
 sourceSets {
     test {
         output.resourcesDir = file('build/classes/java/test')
+    }
+}
+
+
+jar {
+    manifest {
+        attributes('Export-Package': 'ch.sourcepond.osgi.cmpn.metatype')
     }
 }

@@ -100,7 +100,7 @@ public class ConfigBuilderFactoryTest {
         props.put(GET_TIME_UNIT, TIME_UNIT_VALUE);
         props.put(GET_TIME_UNITS, TIME_UNIT_VALUES);
         props.put(GET_PASSWORDS, PASSWORD_VALUES);
-        config = factory.create(props, (Class) cl.loadClass(TestConfigurationAsAnnotation.class.getName())).build();
+        config = factory.create((Class) cl.loadClass(TestConfigurationAsAnnotation.class.getName()), props).build();
     }
 
     private <T> T get(final String pMethodName) throws Exception {
@@ -108,8 +108,35 @@ public class ConfigBuilderFactoryTest {
     }
 
     @Test
+    public void buildWithDefaults() throws Exception {
+        config = factory.create((Class) cl.loadClass(TestConfigurationAsAnnotation.class.getName()), null).build();
+        assertEquals("one", get(GET_STRING));
+        assertEquals(LONG_VALUE, get(GET_LONG));
+        assertEquals(DOUBLE_VALUE, get(GET_DOUBLE));
+        assertEquals(FLOAT_VALUE, get(GET_FLOAT));
+        assertEquals(INTEGER_VALUE, get(GET_INTEGER));
+        assertEquals(BYTE_VALUE, get(GET_BYTE));
+        assertEquals(CHARACTER_VALUE, get(GET_CHARACTER));
+        assertEquals(BOOLEAN_VALUE, get(GET_BOOLEAN));
+        assertEquals(SHORT_VALUE, get(GET_SHORT));
+        assertEquals("password", get(GET_PASSWORD));
+        assertArrayEquals(new String[]{"one", "two"}, get(GET_STRINGS));
+        assertArrayEquals(LONG_VALUES, get(GET_LONGS));
+        assertArrayEquals(DOUBLE_VALUES, get(GET_DOUBLES), 0);
+        assertArrayEquals(FLOAT_VALUES, get(GET_FLOATS), 0);
+        assertArrayEquals(INTEGER_VALUES, get(GET_INTEGERS));
+        assertArrayEquals(BYTE_VALUES, get(GET_BYTES));
+        assertArrayEquals(new char[]{'a', 'b'}, get(GET_CHARACTERS));
+        assertArrayEquals(BOOLEAN_VALUES, get(GET_BOOLEANS));
+        assertArrayEquals(SHORT_VALUES, get(GET_SHORTS));
+        assertArrayEquals(new String[]{"one", "two"}, get(GET_PASSWORDS));
+        assertEquals(TIME_UNIT_VALUE, get(GET_TIME_UNIT));
+        assertArrayEquals(TIME_UNIT_VALUES, get(GET_TIME_UNITS));
+    }
+
+    @Test
     public void build() throws Exception {
-        final Object config = factory.create(props, (Class) cl.loadClass(TestConfigurationAsAnnotation.class.getName())).build();
+        final Object config = factory.create((Class) cl.loadClass(TestConfigurationAsAnnotation.class.getName()), props).build();
         assertEquals(STRING_VALUE, get(GET_STRING));
         assertEquals(LONG_VALUE, get(GET_LONG));
         assertEquals(DOUBLE_VALUE, get(GET_DOUBLE));

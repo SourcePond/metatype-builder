@@ -2,9 +2,9 @@ group 'ch.sourcepond.osgi.cmpn'
 version '0.1-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'osgi'
 apply plugin: 'maven'
 apply plugin: 'idea'
+apply plugin: 'biz.aQute.bnd.builder'
 
 sourceCompatibility = 1.8
 
@@ -31,7 +31,7 @@ sourceSets {
 
 jar {
     manifest {
-        instruction 'Bundle-Activator', 'ch.sourcepond.osgi.cmpn.metatype.testbundle.Activator'
+        attributes('Bundle-Activator': 'ch.sourcepond.osgi.cmpn.metatype.testbundle.Activator')
     }
 }
 

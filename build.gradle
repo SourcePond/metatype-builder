@@ -10,6 +10,15 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
+    }
+}
+
 allprojects {
     apply plugin: 'idea'
     idea {

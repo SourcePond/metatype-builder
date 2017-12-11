@@ -16,76 +16,79 @@ package ch.sourcepond.osgi.cmpn.metatype;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.DAYS;
 
+@Retention(RetentionPolicy.RUNTIME)
 @ObjectClassDefinition(name = "TestConfigurationAsAnnotation", description = "Test configuration")
 public @interface TestConfigurationAsAnnotation {
 
-    @AttributeDefinition(description = "Some string", defaultValue = "one")
-    String getString();
+    @AttributeDefinition(description = "Some string")
+    String getString() default "one";
 
     @AttributeDefinition(description = "Some long", defaultValue = "1")
-    long getLong();
+    long getLong() default 1;
 
     @AttributeDefinition(description = "Some double", defaultValue = "1")
-    double getDouble();
+    double getDouble() default 1;
 
     @AttributeDefinition(description = "Some float", defaultValue = "1")
-    float getFloat();
+    float getFloat() default 1;
 
     @AttributeDefinition(description = "Some integer", defaultValue = "1")
-    int getInteger();
+    int getInteger() default 1;
 
-    @AttributeDefinition(description = "Some byte", defaultValue = "1")
-    byte getByte();
+    @AttributeDefinition(description = "Some byte")
+    byte getByte() default 1;
 
-    @AttributeDefinition(description = "Some character", defaultValue = "a")
-    char getCharacter();
+    @AttributeDefinition(description = "Some character")
+    char getCharacter() default 'a';
 
-    @AttributeDefinition(description = "Some boolean", defaultValue = "true")
-    boolean getBoolean();
+    @AttributeDefinition(description = "Some boolean")
+    boolean getBoolean() default true;
 
-    @AttributeDefinition(description = "Some short", defaultValue = "1")
-    short getShort();
+    @AttributeDefinition(description = "Some short")
+    short getShort() default 1;
 
     @AttributeDefinition(description = "Some password")
-    String getPassword();
+    String getPassword() default "password";
 
-    @AttributeDefinition(description = "Some strings",  cardinality = 5, defaultValue = {"one" ,"two"}, min = "3", max = "30")
-    String[] getStrings();
+    @AttributeDefinition(description = "Some strings", cardinality = 5, min = "3", max = "30")
+    String[] getStrings() default {"one", "two"};
 
-    @AttributeDefinition(description = "Some longs", cardinality = 5, defaultValue = {"1" ,"2"}, min = "1", max = "10")
-    long[] getLongs();
+    @AttributeDefinition(description = "Some longs", cardinality = 5, min = "1", max = "10")
+    long[] getLongs() default {1, 2};
 
-    @AttributeDefinition(description = "Some doubles", cardinality = 5, defaultValue = {"1" ,"2"}, min = "1", max = "10")
-    double[] getDoubles();
+    @AttributeDefinition(description = "Some doubles", cardinality = 5, min = "1", max = "10")
+    double[] getDoubles() default {1, 2};
 
-    @AttributeDefinition(description = "Some floats", cardinality = 5, defaultValue = {"1" ,"2"}, min = "1", max = "10")
-    float[] getFloats();
+    @AttributeDefinition(description = "Some floats", cardinality = 5, min = "1", max = "10")
+    float[] getFloats() default {1, 2};
 
-    @AttributeDefinition(description = "Some integers", cardinality = 5, defaultValue = {"1" ,"2"}, min = "1", max = "10")
-    int[] getIntegers();
+    @AttributeDefinition(description = "Some integers", cardinality = 5, min = "1", max = "10")
+    int[] getIntegers() default {1, 2};
 
-    @AttributeDefinition(description = "Some bytes", cardinality = 5, defaultValue = {"1" ,"2"}, min = "1", max = "10")
-    byte[] getBytes();
+    @AttributeDefinition(description = "Some bytes", cardinality = 5, min = "1", max = "10")
+    byte[] getBytes() default {1, 2};
 
-    @AttributeDefinition(description = "Some characters", cardinality = 5, defaultValue = {"a" ,"b"}, min = "a", max = "z")
-    char[] getCharacters();
+    @AttributeDefinition(description = "Some characters", cardinality = 5, min = "a", max = "z")
+    char[] getCharacters() default {'a', 'b'};
 
-    @AttributeDefinition(description = "Some booleans", cardinality = 5, defaultValue = {"true" ,"true"})
-    boolean[] getBooleans();
+    @AttributeDefinition(description = "Some booleans", cardinality = 5)
+    boolean[] getBooleans() default {true, true};
 
-    @AttributeDefinition(description = "Some shorts", cardinality = 5, defaultValue = {"1" ,"2"}, min = "1", max = "10")
-    short[] getShorts();
+    @AttributeDefinition(description = "Some shorts", cardinality = 5, defaultValue = {"1", "2"}, min = "1", max = "10")
+    short[] getShorts() default {1, 2};
 
-    @AttributeDefinition(description = "Some passwords", cardinality = 5, defaultValue = {"1" ,"2"}, min = "3", max = "30")
-    String[] getPasswords();
+    @AttributeDefinition(description = "Some passwords", cardinality = 5, min = "3", max = "30")
+    String[] getPasswords() default {"one", "two"};
 
     @AttributeDefinition(description = "Some timeunit")
     TimeUnit getTimeUnit() default DAYS;
 
-    @AttributeDefinition(description = "Some timeunits", cardinality = 5, defaultValue = {"DAYS", "HOURS"})
-    TimeUnit[] getTimeUnits();
+    @AttributeDefinition(description = "Some timeunits", cardinality = 5)
+    TimeUnit[] getTimeUnits() default {TimeUnit.DAYS, TimeUnit.HOURS};
 }

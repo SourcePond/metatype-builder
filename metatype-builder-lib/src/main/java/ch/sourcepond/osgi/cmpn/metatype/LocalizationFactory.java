@@ -16,7 +16,6 @@ package ch.sourcepond.osgi.cmpn.metatype;
 import org.osgi.framework.Bundle;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;

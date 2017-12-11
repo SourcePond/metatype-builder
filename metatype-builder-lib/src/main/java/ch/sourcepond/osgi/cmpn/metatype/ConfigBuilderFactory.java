@@ -16,17 +16,19 @@ package ch.sourcepond.osgi.cmpn.metatype;
 import java.lang.annotation.Annotation;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 public class ConfigBuilderFactory {
 
-    public <T extends Annotation> ConfigBuilder<T> create(final Dictionary<String, ?> pConfig, final Class<T> pConfigAnnotation) {
+    public <T extends Annotation> ConfigBuilder<T> create(final Class<T> pConfigAnnotation, final Dictionary<String, ?> pConfig) {
+        final Dictionary<String, ?> config = pConfig == null ? new Hashtable<>() : pConfig;
         final OCDBuilder ocdBuilder = MTPBuilder.create(pConfigAnnotation).ocd(pConfigAnnotation.getName(),
                 pConfigAnnotation.getSimpleName());
         final Map<String, ADBuilder<?, ?>> ad = new HashMap<>();
         for (final ADBuilder<?, ?> adBuilder : ocdBuilder.getAD()) {
             ad.put(adBuilder.getId(), adBuilder);
         }
-        return new ConfigBuilder<>(pConfig, pConfigAnnotation, ad);
+        return new ConfigBuilder<>(config, pConfigAnnotation, ad);
     }
 }
