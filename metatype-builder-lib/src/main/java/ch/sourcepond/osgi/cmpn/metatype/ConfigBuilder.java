@@ -37,18 +37,16 @@ public class ConfigBuilder<T extends Annotation> {
         ad = pAd;
     }
 
-    private T toConfig() throws ConfigurationException {
+    private T toConfig() {
         final Map<String, Object> map = new HashMap<>();
         final Enumeration<String> keys = config.keys();
         while (keys.hasMoreElements()) {
             final String key = keys.nextElement();
             final Object value = config.get(key);
 
-            if (!ad.containsKey(key)) {
-                throw new ConfigurationException(key, "Unsupported property!");
+            if (ad.containsKey(key)) {
+                map.put(key, config.get(key));
             }
-
-            map.put(key, config.get(key));
         }
 
         for (final Method m : configAnnotation.getDeclaredMethods()) {
