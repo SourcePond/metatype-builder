@@ -1,33 +1,16 @@
-group 'ch.sourcepond.osgi.cmpn'
-version '0.1-SNAPSHOT'
-
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'idea'
-apply plugin: 'biz.aQute.bnd.builder'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    compile 'org.osgi:org.osgi.core:6.0.0'
-    compile 'org.osgi:osgi.cmpn:6.0.0'
-    testCompile 'org.mockito:mockito-core:2.11.0'
-    testCompile 'junit:junit:4.12'
-    testCompile 'commons-io:commons-io:2.6'
+    compile 'org.slf4j:slf4j-api'
+    compile 'org.osgi:org.osgi.core'
+    compile 'org.osgi:osgi.cmpn'
+    testCompile 'commons-io:commons-io'
 }
 
 sourceSets {
     test {
-        output.resourcesDir = file('build/classes/java/test')
+        output.resourcesDir = file('out/test/classes')
+        output.classesDir = 'out/test/classes'
     }
 }
-
 
 jar {
     manifest {

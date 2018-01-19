@@ -1,13 +1,64 @@
-group 'ch.sourcepond.osgi.cmpn'
-version '0.1-SNAPSHOT'
+allprojects {
+    group 'ch.sourcepond.osgi.cmpn'
+    version '0.1-SNAPSHOT'
+}
 
-apply plugin: 'java'
-apply plugin: 'idea'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'biz.aQute.bnd.builder'
+    apply plugin: 'io.spring.dependency-management'
 
-sourceCompatibility = 1.8
+    sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    sourceSets {
+        integrationTest {
+            java {
+                compileClasspath += main.output + test.output
+                runtimeClasspath += main.output + test.output
+                srcDir file('src/integration-test/java')
+            }
+            resources.srcDir file('src/integration-test/resources')
+        }
+    }
+
+    dependencyManagement {
+        dependencies {
+            // Compile dependencies
+            dependency 'org.slf4j:slf4j-api:1.7.25'
+            dependency 'org.osgi:org.osgi.core:6.0.0'
+            dependency 'org.osgi:osgi.cmpn:6.0.0'
+
+            // Test dependencies
+            dependency 'junit:junit:4.12'
+            dependency 'org.mockito:mockito-core:2.11.0'
+            dependency 'ch.qos.logback:logback-core:1.2.3'
+            dependency 'ch.qos.logback:logback-classic:1.2.3'
+            dependency 'commons-io:commons-io:2.6'
+
+            // Integration-test dependencies
+            dependency 'org.apache.felix:org.apache.felix.metatype:1.1.6'
+            dependency 'org.apache.felix:org.apache.felix.configadmin:1.8.16'
+            dependency 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.javax-inject:1_2'
+            dependency 'org.ops4j.pax.exam:pax-exam-container-native:4.11.0'
+            dependency 'org.ops4j.pax.exam:pax-exam-junit4:4.11.0'
+            dependency 'org.ops4j.pax.exam:pax-exam-link-mvn:4.11.0'
+            dependency 'org.ops4j.pax.url:pax-url-aether:2.5.3'
+            dependency 'org.apache.felix:org.apache.felix.framework:5.6.10'
+        }
+    }
+
+    dependencies {
+        testCompile 'junit:junit'
+        testCompile 'org.mockito:mockito-core'
+        testCompile 'ch.qos.logback:logback-core'
+        testCompile 'ch.qos.logback:logback-classic'
+    }
 }
 
 buildscript {
@@ -16,20 +67,6 @@ buildscript {
     }
     dependencies {
         classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
-    }
-}
-
-allprojects {
-    apply plugin: 'idea'
-    idea {
-        module {
-            outputDir file('build/classes/main')
-            testOutputDir file('build/classes/test')
-        }
-    }
-    if(project.convention.findPlugin(JavaPluginConvention)) {
-        // Change the output directory for the main and test source sets back to the old path
-        sourceSets.main.output.classesDir = new File(buildDir, "classes/main")
-        sourceSets.test.output.classesDir = new File(buildDir, "classes/test")
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE'
     }
 }
