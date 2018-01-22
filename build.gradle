@@ -73,6 +73,10 @@ subprojects {
     build.dependsOn copyIntegrationTestArtifacts
 }
 
+nexusStaging {
+    packageGroup 'ch.sourcepond'
+}
+
 buildscript {
     repositories {
         mavenCentral()
