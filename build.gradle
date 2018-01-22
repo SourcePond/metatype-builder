@@ -128,7 +128,7 @@ subprojects {
         }
     }
 
-    afterReleaseBuild.dependsOn uploadArchives
+    //afterReleaseBuild.dependsOn uploadArchives
 }
 
 buildscript {
