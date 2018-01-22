@@ -1,6 +1,5 @@
 allprojects {
     group 'ch.sourcepond.osgi.cmpn'
-    version '0.1-SNAPSHOT'
 }
 
 subprojects {
