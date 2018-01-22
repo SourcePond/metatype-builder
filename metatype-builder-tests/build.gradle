@@ -3,7 +3,7 @@ dependencies {
     testCompile 'org.osgi:osgi.cmpn'
     testCompile 'org.ops4j.pax.exam:pax-exam-junit4'
     testCompile 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.javax-inject'
-    testCompile 'ch.sourcepond.testing:bundle-test-support:0.1-SNAPSHOT'
+    testCompile 'ch.sourcepond.testing:bundle-test-support:0.1.12'
     testRuntime project(':metatype-builder-testbundle')
     testRuntime project(':metatype-builder-lib')
     testRuntime 'org.apache.felix:org.apache.felix.metatype'
