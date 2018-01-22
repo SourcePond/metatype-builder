@@ -173,7 +173,7 @@ final class Type<T, U> {
             }
         }
 
-        throw new IllegalArgumentException(format("No constant found with name %d", pName));
+        throw new IllegalArgumentException(format("No constant found with name %s", pName));
     }
 }
 
