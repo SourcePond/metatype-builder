@@ -1,3 +1,6 @@
+apply plugin: 'signing'
+apply plugin: 'net.researchgate.release'
+
 dependencies {
     compile 'org.slf4j:slf4j-api'
     compile 'org.osgi:org.osgi.core'
@@ -5,15 +8,75 @@ dependencies {
     testCompile 'commons-io:commons-io'
 }
 
-sourceSets {
-    test {
-        output.resourcesDir = file('out/test/classes')
-        output.classesDir = 'out/test/classes'
-    }
-}
-
 jar {
     manifest {
         attributes('Export-Package': 'ch.sourcepond.osgi.cmpn.metatype')
     }
 }
+
+// OSSRH
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Metatype Builder'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Simple library for building OSGi metatype components'
+                url 'scm:git:https://github.com/SourcePond/metatype-builder.git'
+
+                scm {
+                    connection 'scm:git:https://github.com/SourcePond/metatype-builder.git'
+                    developerConnection 'scm:git:ssh:git@github.com:SourcePond/metatype-builder.git'
+                    url 'https://github.com/SourcePond/metatype-builder.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'roland'
+                        name 'Roland Hauser'
+                        email 'sourcepond@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+build.dependsOn install
+afterReleaseBuild.dependsOn uploadArchives

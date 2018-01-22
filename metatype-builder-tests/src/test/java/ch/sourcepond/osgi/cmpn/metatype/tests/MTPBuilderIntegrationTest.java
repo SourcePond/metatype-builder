@@ -28,6 +28,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import javax.inject.Inject;
 
+import static ch.sourcepond.testing.OptionsHelper.provisionBundlesFromUserDir;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
@@ -45,11 +46,10 @@ public class MTPBuilderIntegrationTest {
     private Bundle testBundle;
 
     @Configuration
-    public Option[] configure() {
+    public Option[] configure() throws Exception {
         return new Option[]{
                 junitBundles(),
-                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-lib").versionAsInProject(),
-                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-testbundle").versionAsInProject(),
+                provisionBundlesFromUserDir("build", "paxexam"),
                 mavenBundle("org.apache.felix", "org.apache.felix.metatype").versionAsInProject(),
                 mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject()
         };

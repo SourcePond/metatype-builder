@@ -3,6 +3,7 @@ dependencies {
     testCompile 'org.osgi:osgi.cmpn'
     testCompile 'org.ops4j.pax.exam:pax-exam-junit4'
     testCompile 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.javax-inject'
+    testCompile 'ch.sourcepond.testing:bundle-test-support:0.1-SNAPSHOT'
     testRuntime project(':metatype-builder-testbundle')
     testRuntime project(':metatype-builder-lib')
     testRuntime 'org.apache.felix:org.apache.felix.metatype'
@@ -47,6 +48,9 @@ task generateDependsFile {
     }
 }
 
-test.dependsOn(":metatype-builder-testbundle:install")
-test.dependsOn(":metatype-builder-lib:install")
+test.dependsOn(":metatype-builder-testbundle:copyIntegrationTestArtifacts")
+test.dependsOn(":metatype-builder-lib:copyIntegrationTestArtifacts")
 test.dependsOn 'generateDependsFile'
+test.outputs.upToDateWhen { false }
+
+copyIntegrationTestArtifacts.enabled=false

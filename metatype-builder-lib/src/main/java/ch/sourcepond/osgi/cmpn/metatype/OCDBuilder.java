@@ -22,7 +22,8 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public class OCDBuilder {
-    private MTPBuilder mtpBuilder;
+    private transient MTPBuilder mtpBuilder;
+    private transient ClassLoader sourceLoader;
     private List<ADBuilder<?, ?>> adBuilders;
     private List<IconBuilder> iconBuilders;
     private String name;
@@ -32,8 +33,9 @@ public class OCDBuilder {
     OCDBuilder() {
     }
 
-    void initAfterUnmarshal(final MTPBuilder pMtpBuilder) {
+    void initAfterUnmarshal(final MTPBuilder pMtpBuilder, final ClassLoader pSourceLoader) {
         mtpBuilder = pMtpBuilder;
+        sourceLoader = pSourceLoader;
         adBuilders.forEach(adBuilder -> adBuilder.initAfterUnmarshal(this));
     }
 
@@ -149,7 +151,8 @@ public class OCDBuilder {
                 iconBuilders.stream().map(i -> i.setParent(this).build()).collect(toList()),
                 adBuilders == null ? emptyList() : adBuilders.stream().map(b -> b.setParent(this).build()).collect(toList()),
                 name,
-                description
+                description,
+                sourceLoader
         );
     }
 

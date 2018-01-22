@@ -13,11 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 package ch.sourcepond.osgi.cmpn.metatype;
 
+import org.osgi.framework.Bundle;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -34,17 +36,20 @@ final class OCD implements ObjectClassDefinition, Localizable<OCD> {
     private final String description;
     private final List<AD> ad;
     private final List<Icon> icon;
+    private final transient ClassLoader sourceLoader;
 
     public OCD(final String pId,
                final List<Icon> pIcon,
                final List<AD> pAd,
                final String pName,
-               final String pDescription) {
+               final String pDescription,
+               final ClassLoader pSourceLoader) {
         name = pName;
         id = pId;
         description = pDescription;
         ad = pAd;
         icon = pIcon;
+        sourceLoader = pSourceLoader;
     }
 
     @Override
@@ -53,7 +58,8 @@ final class OCD implements ObjectClassDefinition, Localizable<OCD> {
                 icon,
                 ad.stream().map(ad -> ad.localize(pLocalization)).collect(toList()),
                 pLocalization.localize(name),
-                pLocalization.localize(description)));
+                pLocalization.localize(description),
+                sourceLoader));
     }
 
     @Override
@@ -95,10 +101,10 @@ final class OCD implements ObjectClassDefinition, Localizable<OCD> {
     }
 
     @Override
-    public InputStream getIcon(int size) throws IOException {
+    public InputStream getIcon(int size) {
         final Optional<Icon> opt = icon.stream().filter(i -> size == i.getSize()).findFirst();
         if (opt.isPresent()) {
-            return new URL(getClass().getResource("/"), opt.get().getResource()).openStream();
+            return sourceLoader.getResourceAsStream(opt.get().getResource());
         }
         return null;
     }

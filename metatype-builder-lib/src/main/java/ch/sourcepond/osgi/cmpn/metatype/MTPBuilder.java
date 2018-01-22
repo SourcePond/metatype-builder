@@ -42,7 +42,7 @@ import static org.osgi.framework.FrameworkUtil.getBundle;
 public class MTPBuilder {
     private final Map<String, OCDBuilder> ocdBuilderMap = new HashMap<>();
     private final List<OCDBuilder> ocdBuilders = new LinkedList<>();
-    private Bundle bundle;
+    private transient Bundle bundle;
     private String localization;
 
     MTPBuilder() {
@@ -64,14 +64,14 @@ public class MTPBuilder {
         } catch (final IOException e) {
             throw new UncheckedIOException(e.getMessage(), e);
         }
-        mtpBuilder.initAfterUnmarshal();
+        mtpBuilder.initAfterUnmarshal(pConfigDefinition.getClassLoader());
         mtpBuilder.setBundle(getBundle(pConfigDefinition));
         return mtpBuilder;
     }
 
-    private void initAfterUnmarshal() {
+    private void initAfterUnmarshal(final ClassLoader pSourceLoader) {
         ocdBuilders.forEach(ocdBuilder -> {
-            ocdBuilder.initAfterUnmarshal(this);
+            ocdBuilder.initAfterUnmarshal(this, pSourceLoader);
             ocdBuilderMap.put(ocdBuilder.getId(), ocdBuilder);
         });
     }
