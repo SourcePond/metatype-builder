@@ -1,4 +1,5 @@
 apply plugin: 'io.codearte.nexus-staging'
+apply plugin: 'org.sonarqube'
 
 allprojects {
     group 'ch.sourcepond.osgi.cmpn'
@@ -83,6 +84,7 @@ buildscript {
         classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.5.0'
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.4.RELEASE'
         classpath 'net.researchgate:gradle-release:2.6.0'
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
+        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.1'
     }
 }
