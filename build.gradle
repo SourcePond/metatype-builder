@@ -6,8 +6,10 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'signing'
     apply plugin: 'biz.aQute.bnd.builder'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'net.researchgate.release'
 
     sourceCompatibility = 1.8
 
@@ -59,6 +61,73 @@ subprojects {
         testCompile 'ch.qos.logback:logback-core'
         testCompile 'ch.qos.logback:logback-classic'
     }
+
+    // OSSRH
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name 'Metatype Builder'
+                    packaging 'jar'
+                    // optionally artifactId can be defined here
+                    description 'Simple library for building OSGi metatype components'
+                    url 'scm:git:https://github.com/SourcePond/metatype-builder.git'
+
+                    scm {
+                        connection 'scm:git:https://github.com/SourcePond/metatype-builder.git'
+                        developerConnection 'scm:git:ssh:git@github.com:SourcePond/metatype-builder.git'
+                        url 'https://github.com/SourcePond/metatype-builder.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'roland'
+                            name 'Roland Hauser'
+                            email 'sourcepond@gmail.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    afterReleaseBuild.dependsOn uploadArchives
 }
 
 buildscript {

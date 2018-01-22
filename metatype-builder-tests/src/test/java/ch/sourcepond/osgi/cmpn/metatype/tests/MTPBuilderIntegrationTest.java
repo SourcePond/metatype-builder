@@ -48,10 +48,10 @@ public class MTPBuilderIntegrationTest {
     public Option[] configure() {
         return new Option[]{
                 junitBundles(),
-                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-lib").version("0.1-SNAPSHOT"),
-                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-testbundle").version("0.1-SNAPSHOT"),
-                mavenBundle("org.apache.felix", "org.apache.felix.metatype").version("1.1.6"),
-                mavenBundle("org.apache.felix", "org.apache.felix.configadmin").version("1.8.16")
+                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-lib").versionAsInProject(),
+                mavenBundle("ch.sourcepond.osgi.cmpn", "metatype-builder-testbundle").versionAsInProject(),
+                mavenBundle("org.apache.felix", "org.apache.felix.metatype").versionAsInProject(),
+                mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject()
         };
     }
 
